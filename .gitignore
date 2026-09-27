@@ -1,0 +1,40 @@
+# harness-bootstrap >>>
+# HYG-02/03 — credentials never enter the tree. `.env.example` is the documented
+# shape and stays tracked.
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+.secrets/
+
+# Local tooling
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+coverage/
+*.log
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Harness report (regenerated; not a source)
+harness-report.md
+harness-badge.svg
+
+# NOT ignored on purpose: the generated AI surfaces (.claude/skills/,
+# .claude/commands/, .agents/, .codex/, .github/prompts/, .github/instructions/).
+# They are committed so a fresh clone works without running the generator.
+# harness-bootstrap <<<
