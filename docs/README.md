@@ -8,8 +8,8 @@ Toda pasta sob `docs/` é **lowercase**, inclusive a da língua: `docs/pt-br/`.
 | Árvore | Padrão | Um arquivo por | Estado |
 |---|---|---|---|
 | [`architecture/`](pt-br/architecture/) | C4 | nível | em evolução |
-| [`specs/`](pt-br/specs/) | SDD | capacidade | em evolução |
-| [`decisions/`](pt-br/decisions/) | ADR (MADR) | decisão | em evolução |
+| [`specs/`](pt-br/specs/) | SDD | capacidade | [portal público CCEAK](pt-br/specs/portal-publico-cceak.md) |
+| [`decisions/`](pt-br/decisions/) | ADR (MADR) | decisão | [Vite + Vercel](pt-br/decisions/0002-vite-vercel.md) · [Supabase](pt-br/decisions/0003-supabase-como-banco-de-dados.md) · [Docker Compose](pt-br/decisions/0004-stack-local-docker-compose.md) |
 | [`manual/`](pt-br/manual/) | manual do usuário | tarefa de público | em evolução |
 | [`pesquisas/`](pt-br/pesquisas/) | pesquisas públicas | investigação documentada | em evolução |
 
