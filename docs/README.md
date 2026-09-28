@@ -1,17 +1,17 @@
 # Documentação — cceak
 
-Índice. Todo documento deste projeto mora em uma das quatro árvores abaixo, dentro da
-subárvore da sua língua. Nunca solto na raiz, nunca dois padrões no mesmo arquivo.
+Índice. Todo documento deste projeto mora em uma das quatro árvores abaixo, dentro de
+`docs/pt-br/`. Nunca solto na raiz e nunca em outro idioma.
 
-Toda pasta sob `docs/` é **lowercase**, inclusive a da língua: `docs/pt-br/`,
-`docs/en-us/`. pt-BR é a fonte da verdade; o irmão en-US abre com um ponteiro para ele.
+Toda pasta sob `docs/` é **lowercase**, inclusive a da língua: `docs/pt-br/`.
 
 | Árvore | Padrão | Um arquivo por | Estado |
 |---|---|---|---|
-| [`architecture/`](pt-br/architecture/) | C4 | nível | TODO |
-| [`specs/`](pt-br/specs/) | SDD | capacidade | TODO |
-| [`decisions/`](pt-br/decisions/) | ADR (MADR) | decisão | TODO |
-| [`manual/`](pt-br/manual/) | manual do usuário | tarefa de público | TODO ou "não se aplica: <razão>" |
+| [`architecture/`](pt-br/architecture/) | C4 | nível | em evolução |
+| [`specs/`](pt-br/specs/) | SDD | capacidade | em evolução |
+| [`decisions/`](pt-br/decisions/) | ADR (MADR) | decisão | em evolução |
+| [`manual/`](pt-br/manual/) | manual do usuário | tarefa de público | em evolução |
+| [`pesquisas/`](pt-br/pesquisas/) | pesquisas públicas | investigação documentada | em evolução |
 
 ## Deliberadamente ausente
 

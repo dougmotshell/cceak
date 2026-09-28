@@ -1,6 +1,6 @@
 # cceak
 
-TODO: uma frase dizendo o que este projeto é e para quem.
+Base documental e ferramentas de pesquisa pública sobre a Casa de Cultura Espírita Allan Kardec, para consulta e manutenção por pessoas e agentes do projeto.
 
 Este arquivo é o **contrato canônico**. `CLAUDE.md` e `.github/copilot-instructions.md`
 o importam; nunca duplique conteúdo neles. Codex, Copilot, Cursor e Gemini CLI leem
@@ -30,7 +30,7 @@ diretórios, sem inventário de dependências, sem narração de arquitetura.
 
 - Nomes de arquivos e pastas em **lowercase** (`kebab-case`), exceto onde a
   convenção do próprio arquivo exige outra grafia (`README.md`, `AGENTS.md`).
-- Identificadores em en-US; prosa em **pt-BR e en-US**, sempre nas duas.
+- Identificadores em en-US; toda a prosa e documentação em **pt-BR**.
 - Documento novo entra em uma das quatro árvores de `docs/` — nunca na raiz.
 
 ## Armadilhas
@@ -45,8 +45,8 @@ TODO: o que já quebrou aqui e por quê. Uma linha por armadilha.
 
 ## Documentação
 
-`docs/pt-br/` e `docs/en-us/`, cada um com `architecture/` (C4), `specs/` (SDD),
-`decisions/` (ADR) e `manual/`. Índice em `docs/README.md`. Detalhe fica lá, não aqui.
+`docs/pt-br/` com `architecture/` (C4), `specs/` (SDD), `decisions/` (ADR),
+`manual/` e `pesquisas/`. Índice em `docs/README.md`. Detalhe fica lá, não aqui.
 
 ## Memória
 

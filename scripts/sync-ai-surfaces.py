@@ -37,8 +37,8 @@ its own `.claude/skills/`.
 `--check` is for CI: it fails when someone hand-edited an output or forgot to run
 the generator after touching a source.
 
-Translations (`<n>.en-US.md`, `SKILL.en-US.md`) are skipped: they exist for
-readers, not so the model loads the same skill twice.
+O projeto é monolíngue em pt-BR. Arquivos com sufixo de tradução continuam sendo
+ignorados por compatibilidade, mas não devem ser criados.
 """
 
 from __future__ import annotations
@@ -53,6 +53,11 @@ ROOT = Path(__file__).resolve().parent.parent
 # Project name in the banner. The root directory name by default; replace with a
 # fixed string if a clone's directory may be named differently.
 PROJECT = ROOT.name
+
+# Alguns ambientes de execução montam `.agents/` e `.codex/` como somente leitura.
+# As fontes continuam autoradas no repositório; nessas superfícies o gerador apenas
+# informa a limitação em vez de falhar no meio da sincronização.
+READ_ONLY_SURFACES = (".agents", ".codex")
 
 BANNER = f"<!-- managed-by:{PROJECT}/sync-ai-surfaces — do not edit by hand -->"
 TOML_BANNER = f"# managed-by:{PROJECT}/sync-ai-surfaces — do not edit by hand"
@@ -72,11 +77,7 @@ GENERATED_ROOTS = (
     ".codex",
 )
 
-# All prose in these projects exists in pt-BR and en-US. The source is the file
-# with no suffix (pt-BR, the source of truth); the translation is a sibling with a
-# language suffix — `adr.en-US.md`, `SKILL.en-US.md`. Only the source is projected:
-# a projected translation would become a duplicate skill or rule with the same
-# `name`.
+# A fonte autorada é pt-BR e não há superfícies de tradução.
 TRANSLATION_SUFFIX = re.compile(r"\.[a-z]{2}-[A-Z]{2}$")
 
 
@@ -247,6 +248,8 @@ def project() -> dict[Path, bytes]:
     out: dict[Path, bytes] = {}
 
     def put(rel: str, content: str) -> None:
+        if rel.split("/", 1)[0] in READ_ONLY_SURFACES:
+            return
         out[Path(rel)] = content.encode("utf-8")
 
     for name, fields, body, skill_dir in collect_skills():
@@ -267,7 +270,8 @@ def project() -> dict[Path, bytes]:
                 continue
             rel = extra.relative_to(skill_dir)
             for base in (".claude/skills", ".agents/skills"):
-                out[Path(f"{base}/{skill_dir.name}/{rel}")] = extra.read_bytes()
+                if base.split("/", 1)[0] not in READ_ONLY_SURFACES:
+                    out[Path(f"{base}/{skill_dir.name}/{rel}")] = extra.read_bytes()
 
         put(
             f".claude/commands/{skill_dir.name}.md",
@@ -303,7 +307,8 @@ def project() -> dict[Path, bytes]:
         if tools:
             lines.append("tools = [" + ", ".join(toml_quote(t) for t in tools) + "]")
         lines += ["", "instructions = " + toml_block(body), ""]
-        out[Path(f".codex/agents/{name}.toml")] = "\n".join(lines).encode("utf-8")
+        if ".codex" not in READ_ONLY_SURFACES:
+            out[Path(f".codex/agents/{name}.toml")] = "\n".join(lines).encode("utf-8")
 
         # Slash command that delegates to the subagent, for CLIs where the agent
         # is not directly invocable.
@@ -358,6 +363,8 @@ def classify_extra(expected: dict[Path, bytes]) -> tuple[list[Path], list[Path]]
             rel = path.relative_to(ROOT)
             if rel in expected:
                 continue
+            if rel.parts[0] in READ_ONLY_SURFACES:
+                continue
             (orphans if is_ours(rel, path.read_bytes()) else foreign).append(rel)
     return sorted(orphans), sorted(foreign)
 
@@ -400,8 +407,12 @@ def main() -> int:
     orphans, foreign = classify_extra(expected)
     if orphans and args.prune and not read_only:
         for rel in orphans:
+            if rel.parts[0] in READ_ONLY_SURFACES:
+                continue
             (ROOT / rel).unlink()
         for generated_root in GENERATED_ROOTS:
+            if generated_root.split("/", 1)[0] in READ_ONLY_SURFACES:
+                continue
             base = ROOT / generated_root
             for path in sorted(base.rglob("*"), reverse=True) if base.exists() else []:
                 if path.is_dir() and not any(path.iterdir()):

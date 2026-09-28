@@ -9,7 +9,7 @@ memória).
 
 ## Entradas
 
-- TODO: [tópico](topico.md) — gancho de uma linha.
+- [pesquisa-web](pesquisa-web.md) — coleta deve separar evidência, inferência e divergência entre fontes.
 
 ## Regras
 
@@ -18,7 +18,3 @@ memória).
   conteúdo do `AGENTS.md`.
 - Nunca registre segredo, token, hostname real, PII ou nome de cliente.
 - Entrada errada é apagada, não corrigida por acréscimo.
-
-## TODO deste projeto
-
-- [ ] Criar o primeiro arquivo de tópico e apontar daqui
