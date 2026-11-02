@@ -9,8 +9,6 @@
  * Deixando em branco, o site usa os valores padrão de config-schema.js e a administração fica desativada.
  */
 window.CCEAK_ENV = {
-  // TODO: https://<projeto>.supabase.co
-  supabaseUrl: "",
-  // TODO: chave pública anon do projeto (Project Settings > API)
-  supabaseAnonKey: ""
+  supabaseUrl: "https://xpxeygspemsfcdrvaxzy.supabase.co",
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhweGV5Z3NwZW1zZmNkcnZheHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NTI4MzksImV4cCI6MjEwOTIyODgzOX0.rNdy6gnajtP7LJyz__Btyg5x3H5J2cTsjqjR7lSKTCg"
 };
