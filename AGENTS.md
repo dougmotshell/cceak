@@ -7,7 +7,7 @@ o importam; nunca duplique conteúdo neles. Codex, Copilot, Cursor e Gemini CLI 
 este arquivo nativamente.
 
 Irmãos: `.claude/agents/` (agentes) · `skills/` (procedimentos) · `.claude/rules/`
-(regras por caminho) · `docs/` (arquitetura, specs, ADRs, manual) · `memory/`.
+(regras por caminho) · `docs/` (uso e projeto) · `memory/`.
 
 ## Stack
 
@@ -45,8 +45,9 @@ TODO: o que já quebrou aqui e por quê. Uma linha por armadilha.
 
 ## Documentação
 
-`docs/pt-br/` com `architecture/` (C4), `specs/` (SDD), `decisions/` (ADR),
-`manual/` e `pesquisas/`. Índice em `docs/README.md`. Detalhe fica lá, não aqui.
+`docs/uso/` contém manuais e pesquisas públicas. `docs/projeto/` contém `c4/`
+(arquitetura), `sdd/` (especificações) e `adr/` (decisões). Toda a prosa continua
+em pt-BR. Índice em `docs/README.md`. Detalhe fica lá, não aqui.
 
 ## Memória
 

@@ -1,0 +1,33 @@
+{
+  "_leia": "Camadas obrigatórias da pesquisa cruzada CCEAK. Uma camada sem metadados é lacuna declarada, não evidência de inexistência.",
+  "camadas": [
+    {
+      "nome": "institucional",
+      "titulo": "Instituição e fontes públicas",
+      "seletor": {"tags_qualquer": ["institucional", "pesquisa", "cceak"]},
+      "essencial": true,
+      "vocabulario": ["Casa de Cultura Espírita Allan Kardec", "CCEAK", "história", "endereço", "missão"]
+    },
+    {
+      "nome": "redes-sociais",
+      "titulo": "Canais públicos e redes sociais",
+      "seletor": {"tags_qualquer": ["redes-sociais", "instagram", "youtube"]},
+      "essencial": false,
+      "vocabulario": ["Instagram", "YouTube", "vídeo", "palestra", "publicação", "transmissão"]
+    },
+    {
+      "nome": "produto",
+      "titulo": "Portal, estudos, palestras e eventos",
+      "seletor": {"tags_qualquer": ["produto", "estudos", "palestras", "eventos", "portal"]},
+      "essencial": true,
+      "vocabulario": ["cronograma", "calendário", "gravação", "evento", "estudo"]
+    },
+    {
+      "nome": "projeto",
+      "titulo": "Arquitetura, decisões e operação do projeto",
+      "seletor": {"tags_qualquer": ["projeto", "arquitetura", "decisao", "spec", "manual"]},
+      "essencial": true,
+      "vocabulario": ["Vite", "Vercel", "Supabase", "Docker Compose", "ticket", "RAG"]
+    }
+  ]
+}

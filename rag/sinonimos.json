@@ -1,0 +1,15 @@
+{
+  "Casa de Cultura Espírita Allan Kardec": ["CCEAK", "Casa de Cultura Allan Kardec", "instituição espírita"],
+  "estudo": ["estudos", "curso", "grupo de estudo", "cronograma"],
+  "palestra": ["palestras", "exposição", "conferência", "gravação"],
+  "evento": ["eventos", "agenda", "calendário", "programação"],
+  "Instagram": ["instagram", "rede social", "publicação"],
+  "YouTube": ["youtube", "vídeo", "canal", "transmissão"],
+  "Vite": ["frontend", "aplicação web", "build"],
+  "Supabase": ["Postgres", "banco de dados", "Auth", "RLS"],
+  "Vercel": ["deploy", "produção", "preview"],
+  "Docker Compose": ["ambiente local", "containers", "desenvolvimento local"],
+  "ticket": ["tarefa", "bug", "feature", "pesquisa", "chore"],
+  "RAG": ["busca semântica", "recuperação", "acervo", "índice"],
+  "web scraping": ["pesquisa web", "garimpo", "coleta", "fonte pública"]
+}

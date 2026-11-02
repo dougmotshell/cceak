@@ -4,12 +4,13 @@
 tópico em `memory/<topico>.md`. Se uma entrada não cabe numa linha, ela não pertence
 aqui.
 
-Irmãos: `AGENTS.md` (contrato) · `docs/decisions/` (decisões, que são imutáveis e não
+Irmãos: `AGENTS.md` (contrato) · `docs/projeto/adr/` (decisões, que são imutáveis e não
 memória).
 
 ## Entradas
 
 - [pesquisa-web](pesquisa-web.md) — coleta deve separar evidência, inferência e divergência entre fontes.
+- [tickets-rag](tickets-rag.md) — fixtures, metadados, camadas RAG e critério de CPU para este fluxo.
 
 ## Regras
 

@@ -20,7 +20,7 @@ make harness       # pontuar o harness (npx harness-score)
 | Caminho | O que é |
 |---|---|
 | `AGENTS.md` | contrato canônico para agentes de IA — leia primeiro |
-| `docs/` | arquitetura (C4), specs (SDD), decisões (ADR) e manual, somente em `pt-br/` |
+| `docs/` | uso, arquitetura (C4), specs (SDD), decisões (ADR) e pesquisas, somente em pt-BR |
 | `skills/`, `.claude/agents/`, `.claude/rules/` | fontes autoradas do harness |
 | `scripts/sync-ai-surfaces.py` | projeta as fontes nas superfícies de cada CLI |
 | `.claude/hooks/` | gates e feedback em tempo de execução |

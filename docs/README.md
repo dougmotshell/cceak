@@ -1,17 +1,21 @@
 # Documentação — cceak
 
-Índice. Todo documento deste projeto mora em uma das quatro árvores abaixo, dentro de
-`docs/pt-br/`. Nunca solto na raiz e nunca em outro idioma.
+Índice no padrão do projeto de referência: `docs/uso/` responde “como usar” e
+`docs/projeto/` responde “como o sistema é construído”. Toda a prosa é pt-BR;
+identificadores técnicos podem permanecer em en-US.
 
-Toda pasta sob `docs/` é **lowercase**, inclusive a da língua: `docs/pt-br/`.
+| Árvore | Conteúdo | Estado |
+|---|---|---|
+| [`uso/`](uso/) | manuais, operação, pesquisas e fontes públicas | em evolução |
+| [`projeto/c4/`](projeto/c4/) | arquitetura C4 | em evolução |
+| [`projeto/sdd/`](projeto/sdd/) | especificações orientadas a comportamento | [portal público CCEAK](projeto/sdd/portal-publico-cceak.md) |
+| [`projeto/adr/`](projeto/adr/) | decisões arquiteturais | ADR-0001 a ADR-0004 |
 
-| Árvore | Padrão | Um arquivo por | Estado |
-|---|---|---|---|
-| [`architecture/`](pt-br/architecture/) | C4 | nível | em evolução |
-| [`specs/`](pt-br/specs/) | SDD | capacidade | [portal público CCEAK](pt-br/specs/portal-publico-cceak.md) |
-| [`decisions/`](pt-br/decisions/) | ADR (MADR) | decisão | [Vite + Vercel](pt-br/decisions/0002-vite-vercel.md) · [Supabase](pt-br/decisions/0003-supabase-como-banco-de-dados.md) · [Docker Compose](pt-br/decisions/0004-stack-local-docker-compose.md) |
-| [`manual/`](pt-br/manual/) | manual do usuário | tarefa de público | em evolução |
-| [`pesquisas/`](pt-br/pesquisas/) | pesquisas públicas | investigação documentada | em evolução |
+## Pesquisa e RAG
+
+As pesquisas públicas ficam em [`uso/pesquisas/`](uso/pesquisas/). O índice RAG usa
+metadados em `biblioteca/metadata/`, configurações em `rag/` e o comando
+`python3 scripts/rag.py`.
 
 ## Deliberadamente ausente
 
@@ -27,4 +31,4 @@ TODO: o que não existe aqui e por quê — ausência declarada vale mais que á
   (`Status: superseded by NNNN`), nunca reescrita; número nunca é reusado.
 - Ligação nos dois sentidos: spec nomeia os ADRs que a restringem, ADR nomeia o nível
   C4 e as specs que move.
-- Arquivos AUTORADOS: sem banner `managed-by:`, o gerador nunca toca aqui.
+- Arquivos autorados: sem banner `managed-by:`, o gerador nunca toca aqui.
