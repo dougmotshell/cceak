@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- cceak — administração dos estudos · Classificação (ISO/IEC 27001): Uso Interno -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Estudos · Administração · cceak</title>
+  <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/assets/img/casa/logo-allan-kardec.png" type="image/png" sizes="128x128">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <script src="/assets/js/env.js" defer></script>
+  <script src="/assets/js/estudos-admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/admin/" aria-label="Voltar à administração">
+        <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32">
+        <span>Estudos<small>Administração</small></span>
+      </a>
+      <div class="header-actions">
+        <span id="est-session-info" class="session-info"></span>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <div class="container admin-wrap">
+      <div id="est-status" class="notice" role="status" aria-live="polite" hidden></div>
+
+      <section id="est-guard" class="admin-card" aria-labelledby="guard-titulo" hidden>
+        <h1 id="guard-titulo">Entre na administração primeiro</h1>
+        <p class="lead">Os estudos são gerenciados por administradores, diretores e colaboradores autenticados.</p>
+        <p><a class="btn btn--primary" href="/admin/">Ir para o login</a></p>
+      </section>
+
+      <section id="est-panel" aria-labelledby="est-titulo" hidden>
+        <p><a href="/admin/">← Voltar à administração</a> · <a href="/estudos/">Ver a página pública</a></p>
+        <h1 id="est-titulo">Estudos</h1>
+        <p class="lead">Cada estudo cria automaticamente a atividade correspondente na programação da Casa. Ao remover o estudo, a atividade também é removida.</p>
+
+        <section class="admin-card" aria-labelledby="est-form-titulo">
+          <h2 id="est-form-titulo">Novo estudo</h2>
+          <form id="est-form" novalidate>
+            <input type="hidden" id="est-id" value="">
+
+            <label class="field">
+              <span class="field-label">Livro *</span>
+              <input id="est-livro" name="livro" type="text" maxlength="200" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Total de páginas *</span>
+              <input id="est-total" name="total" type="number" min="1" max="100000" step="1" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Página atual</span>
+              <input id="est-pagina" name="pagina" type="number" min="0" step="1">
+            </label>
+            <p id="est-preview" class="help" aria-live="polite"></p>
+
+            <fieldset class="admin-section">
+              <legend>Localização no livro</legend>
+              <p class="help">Informe a página atual ou pelo menos um dos campos abaixo.</p>
+              <label class="field">
+                <span class="field-label">Capítulo</span>
+                <input id="est-capitulo" name="capitulo" type="text" maxlength="120">
+              </label>
+              <label class="field">
+                <span class="field-label">Subcapítulo</span>
+                <input id="est-subcapitulo" name="subcapitulo" type="text" maxlength="120">
+              </label>
+              <label class="field">
+                <span class="field-label">Item</span>
+                <input id="est-item" name="item" type="text" maxlength="120">
+              </label>
+              <label class="field">
+                <span class="field-label">Número</span>
+                <input id="est-numero" name="numero" type="text" maxlength="40">
+              </label>
+              <label class="field">
+                <span class="field-label">Referência</span>
+                <input id="est-referencia" name="referencia" type="text" maxlength="200">
+              </label>
+            </fieldset>
+
+            <label class="field">
+              <span class="field-label">Data do estudo *</span>
+              <input id="est-data" name="data" type="date" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Início *</span>
+              <input id="est-inicio" name="inicio" type="time" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Término (opcional)</span>
+              <input id="est-fim" name="fim" type="time">
+            </label>
+            <label class="check">
+              <input id="est-ativo" type="checkbox" checked>
+              Exibir na página pública e na programação
+            </label>
+
+            <div class="admin-actions">
+              <button id="est-submit" class="btn btn--primary" type="submit">Adicionar estudo</button>
+              <button id="est-cancel" class="btn btn--ghost" type="button" hidden>Cancelar edição</button>
+            </div>
+          </form>
+        </section>
+
+        <h2>Estudos cadastrados</h2>
+        <p id="est-empty" class="help" hidden>Nenhum estudo cadastrado.</p>
+        <ul id="est-list" class="admin-list"></ul>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

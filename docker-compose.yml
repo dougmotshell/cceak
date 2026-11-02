@@ -47,6 +47,8 @@ services:
       - ./docker/local/migrate.sh:/migrate.sh:ro
       - ./supabase/migrations/0001_site_settings.sql:/sql/0001_site_settings.sql:ro
       - ./supabase/migrations/0002_programacao_equipe.sql:/sql/0002_programacao_equipe.sql:ro
+      - ./supabase/migrations/0003_estudos.sql:/sql/0003_estudos.sql:ro
+      - ./docker/local/seed-estudos-dev.sql:/sql/seed-estudos-dev.sql:ro
       - ./docker/local/seed-dev.sql:/sql/seed-dev.sql:ro
       - ./docker/local/seed-equipe-dev.sql:/sql/seed-equipe-dev.sql:ro
 
