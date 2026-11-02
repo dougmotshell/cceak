@@ -1211,6 +1211,52 @@ td {
   background: var(--surface);
 }
 
+/* Convite no destaque: título, citação em duas partes e referência bíblica */
+.hero-convite {
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 62ch;
+  color: var(--hero-text);
+}
+
+.hero-convite-titulo {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--hero-accent);
+}
+
+.hero-citacao {
+  margin: 0;
+  padding: var(--space-3) 0 var(--space-3) var(--space-4);
+  border-left: 3px solid var(--hero-accent);
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 0.95rem + 0.4vw, var(--fs-md));
+  line-height: var(--lh-body);
+}
+
+.hero-citacao p {
+  margin: 0 0 var(--space-3);
+}
+
+.hero-citacao p:last-of-type {
+  margin-bottom: 0;
+}
+
+.hero-citacao-fonte {
+  margin-top: var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  color: var(--hero-text);
+}
+
+.hero-citacao-fonte cite {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--hero-accent);
+}
+
 .canal-banner {
   display: block;
   margin-bottom: 24px;

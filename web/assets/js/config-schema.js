@@ -127,7 +127,6 @@
       fields: [
         { name: "eyebrow", label: "Texto pequeno acima do título", type: "text", max: 80 },
         { name: "title", label: "Título", type: "textarea", max: 120, required: true },
-        { name: "subtitle", label: "Subtítulo", type: "textarea", max: 260 },
         { name: "cta_primary_text", label: "Botão principal (texto)", type: "text", max: 40 },
         { name: "cta_primary_href", label: "Botão principal (destino)", type: "text", max: 120 },
         { name: "cta_secondary_text", label: "Botão secundário (texto)", type: "text", max: 40 },
@@ -136,7 +135,6 @@
       defaults: {
         eyebrow: "Duque de Caxias · RJ",
         title: "Casa de Cultura Espírita Allan Kardec",
-        subtitle: "Um espaço de estudo, acolhimento e divulgação da Doutrina Espírita. TODO: revisar este texto com a Casa.",
         cta_primary_text: "Como chegar",
         cta_primary_href: "#localizacao",
         cta_secondary_text: "Fale conosco",
