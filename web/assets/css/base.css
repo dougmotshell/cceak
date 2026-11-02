@@ -844,6 +844,10 @@ a {
   gap: var(--space-3);
 }
 
+.contact-links + .contact-links {
+  margin-top: var(--space-3);
+}
+
 /* ---------- Rodapé ---------- */
 .site-footer {
   border-top: 1px solid var(--border);
@@ -895,6 +899,40 @@ a {
 }
 
 .cookie-banner[hidden] {
+  display: none;
+}
+
+/* ---------- Voltar ao topo ---------- */
+.to-top {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid var(--border-control);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.to-top:hover {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.to-top:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.to-top[hidden] {
   display: none;
 }
 
@@ -1079,8 +1117,9 @@ td {
 
 .hero-banner .hero-banner-light {
   display: var(--hero-banner-light);
-  mix-blend-mode: multiply; /* o fundo branco da logo se funde ao creme */
-  width: min(370px, 100%);
-  margin-inline: auto;
-  padding-block: 16px;
+}
+
+/* As duas versões têm o mesmo tamanho (1600 x 264): a troca de tema não desloca a página. */
+.hero-banner {
+  aspect-ratio: 1600 / 264;
 }

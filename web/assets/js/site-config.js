@@ -231,11 +231,12 @@
       telLink.textContent = local.phone;
     }
     var waDigits = String(local.whatsapp || "").replace(/\D/g, "");
-    var waLink = document.getElementById("whatsapp-link");
-    if (waLink) {
+    ["whatsapp-link", "whatsapp-contact"].forEach(function (id) {
+      var waLink = document.getElementById(id);
+      if (!waLink) return;
       waLink.hidden = waDigits.length < 12;
       if (waDigits.length >= 12) waLink.setAttribute("href", "https://wa.me/" + waDigits);
-    }
+    });
     var cepWrap = document.getElementById("cep-wrap");
     if (cepWrap) cepWrap.hidden = !local.cep;
     var hours = document.getElementById("hours-text");

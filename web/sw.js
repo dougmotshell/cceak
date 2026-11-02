@@ -8,7 +8,7 @@
  *  - Outras origens e métodos não GET: não são interceptados.
  * Ao publicar mudanças no shell, aumente VERSION para limpar o cache antigo.
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const CACHE = `cceak-${VERSION}`;
 
 const SHELL = [

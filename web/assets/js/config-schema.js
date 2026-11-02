@@ -30,7 +30,7 @@
         { name: "brand_color", label: "Cor principal", type: "color" }
       ],
       defaults: {
-        name: "Casa Allan Kardec",
+        name: "CCEAK",
         company: "Casa de Cultura Espírita Allan Kardec",
         tagline: "Estudo, acolhimento e divulgação da Doutrina Espírita.",
         short_name: "Allan Kardec",

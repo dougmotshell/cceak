@@ -206,4 +206,25 @@
   if (manageBtn) {
     manageBtn.addEventListener("click", showBanner);
   }
+
+  /* ---------- Botão voltar ao topo ---------- */
+  var toTop = document.getElementById("to-top");
+  if (toTop) {
+    var SHOW_AFTER = 600;
+
+    /* Sem requestAnimationFrame: um frame que nunca dispara deixava o estado preso. */
+    function updateToTop() {
+      toTop.hidden = window.pageYOffset < SHOW_AFTER;
+    }
+
+    window.addEventListener("scroll", updateToTop, { passive: true });
+
+    toTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+      var brand = document.querySelector(".brand");
+      if (brand) brand.focus({ preventScroll: true });
+    });
+
+    updateToTop();
+  }
 })();
