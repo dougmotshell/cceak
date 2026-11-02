@@ -57,6 +57,49 @@
         <p><a href="/admin/estudos/">Gerenciar estudos</a></p>
         <p><a href="/">Ver o site</a></p>
 
+        <section id="dash-panel" class="dash" aria-labelledby="dash-titulo" hidden>
+          <h2 id="dash-titulo">Painel do sistema</h2>
+          <p class="help" id="dash-updated"></p>
+
+          <div class="dash-grid">
+            <article class="dash-card">
+              <h3>Atividades na programação</h3>
+              <p class="dash-value" id="dash-prog-value">–</p>
+              <p class="help" id="dash-prog-help"></p>
+            </article>
+            <article class="dash-card">
+              <h3>Estudos cadastrados</h3>
+              <p class="dash-value" id="dash-est-value">–</p>
+              <p class="help" id="dash-est-help"></p>
+            </article>
+            <article class="dash-card">
+              <h3>Progresso médio dos estudos</h3>
+              <p class="dash-value" id="dash-avg-value">–</p>
+              <div class="study-progress" id="dash-avg-bar" role="progressbar" aria-label="Progresso médio dos estudos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="study-progress-fill" id="dash-avg-fill"></div>
+              </div>
+            </article>
+            <article class="dash-card">
+              <h3>Próximos encontros</h3>
+              <p class="dash-value" id="dash-next-value">–</p>
+              <p class="help">Estudos com data a partir de hoje</p>
+            </article>
+          </div>
+
+          <div class="dash-columns">
+            <section class="dash-box" aria-labelledby="dash-next-titulo">
+              <h3 id="dash-next-titulo">Próximos estudos</h3>
+              <ul class="dash-list" id="dash-next"></ul>
+              <p class="help" id="dash-next-empty" hidden>Nenhum estudo agendado.</p>
+            </section>
+            <section class="dash-box" aria-labelledby="dash-recent-titulo">
+              <h3 id="dash-recent-titulo">Últimas alterações nos estudos</h3>
+              <ul class="dash-list" id="dash-recent"></ul>
+              <p class="help" id="dash-recent-empty" hidden>Nenhuma alteração registrada.</p>
+            </section>
+          </div>
+        </section>
+
         <section id="prog-panel" class="admin-card" aria-labelledby="prog-titulo" hidden>
           <h2 id="prog-titulo">Programação da Casa</h2>
           <p class="lead">Cadastre, edite ou remova as atividades. Só as atividades marcadas como exibidas aparecem no site.</p>

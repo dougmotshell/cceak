@@ -490,6 +490,95 @@
     });
   }
 
+  /* ---------- painel do sistema (leitura; a RLS limita o que cada conta vê) ---------- */
+  function pad2(n) { return n < 10 ? "0" + n : String(n); }
+
+  function todayIso() {
+    var d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+
+  function brDate(iso) { return String(iso).split("-").reverse().join("/"); }
+
+  function brDateTime(iso) {
+    var d = new Date(iso);
+    return isNaN(d) ? "" : d.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function dashText(id, text) { $(id).textContent = text; }
+
+  function dashBar(pct) {
+    var bar = $("dash-avg-bar");
+    var v = Math.max(0, Math.min(100, Math.round(pct)));
+    bar.setAttribute("aria-valuenow", String(v));
+    bar.setAttribute("aria-valuetext", v + "% concluído");
+    $("dash-avg-fill").style.width = v + "%";
+  }
+
+  function dashItem(text, meta) {
+    var li = el("li", "dash-item");
+    li.appendChild(el("span", "dash-item-title", text));
+    if (meta) li.appendChild(el("span", "help", meta));
+    return li;
+  }
+
+  function renderDashboard(prog, est) {
+    var hoje = todayIso();
+    var ativas = prog.filter(function (p) { return p.ativo !== false; }).length;
+    dashText("dash-prog-value", String(prog.length));
+    dashText("dash-prog-help", ativas + " exibida(s) · " + (prog.length - ativas) + " oculta(s)");
+
+    dashText("dash-est-value", String(est.length));
+    var concluidos = est.filter(function (e) { return Number(e.progresso_pct) >= 100; }).length;
+    dashText("dash-est-help", concluidos + " concluído(s)");
+
+    var comProgresso = est.filter(function (e) { return e.progresso_pct != null; });
+    if (comProgresso.length) {
+      var media = comProgresso.reduce(function (s, e) { return s + Number(e.progresso_pct); }, 0) / comProgresso.length;
+      dashText("dash-avg-value", Math.round(media) + "%");
+      dashBar(media);
+    } else {
+      dashText("dash-avg-value", "–");
+      dashBar(0);
+    }
+
+    var proximos = est
+      .filter(function (e) { return e.ativo !== false && e.data_estudo >= hoje; })
+      .sort(function (a, b) {
+        return a.data_estudo === b.data_estudo
+          ? String(a.hora_inicio).localeCompare(String(b.hora_inicio))
+          : a.data_estudo.localeCompare(b.data_estudo);
+      });
+    dashText("dash-next-value", String(proximos.length));
+
+    var nextList = $("dash-next");
+    nextList.textContent = "";
+    proximos.slice(0, 5).forEach(function (e) {
+      var pct = e.progresso_pct == null ? "progresso não informado" : Math.round(Number(e.progresso_pct)) + "%";
+      nextList.appendChild(dashItem(e.livro, brDate(e.data_estudo) + " · " + fmtHora(e.hora_inicio) + " · " + pct));
+    });
+    $("dash-next-empty").hidden = proximos.length > 0;
+
+    var recentList = $("dash-recent");
+    recentList.textContent = "";
+    est.slice().sort(function (a, b) { return String(b.updated_at).localeCompare(String(a.updated_at)); })
+      .slice(0, 5)
+      .forEach(function (e) { recentList.appendChild(dashItem(e.livro, brDateTime(e.updated_at))); });
+    $("dash-recent-empty").hidden = est.length > 0;
+
+    dashText("dash-updated", "Atualizado às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+  }
+
+  function loadDashboard() {
+    // Cada consulta é independente: se uma falhar, o painel mostra o que chegou e não derruba o login.
+    return Promise.all([
+      api("/rest/v1/programacao?select=id,ativo&order=ordem.asc").catch(function () { return null; }),
+      api("/rest/v1/estudos?select=id,livro,data_estudo,hora_inicio,progresso_pct,ativo,updated_at").catch(function () { return null; })
+    ]).then(function (res) {
+      renderDashboard(res[0] || [], res[1] || []);
+    });
+  }
+
   /* ---------- telas ---------- */
   function showLogin() {
     $("admin-login").hidden = false;
@@ -518,6 +607,7 @@
       if (!isAdmin && !(rows && rows.length)) throw new Error("NOT_ADMIN");
       state.isAdmin = isAdmin;
       $("config-panel").hidden = !isAdmin;
+      $("dash-panel").hidden = false;
       $("prog-panel").hidden = false;
       showPanel();
       if (!isAdmin) return null;
@@ -530,6 +620,8 @@
       });
     }).then(function () {
       return loadProgramacao();
+    }).then(function () {
+      return loadDashboard();
     }).then(function () {
       status(isAdmin
         ? "Carregado. Altere a programação ou a configuração e salve."
