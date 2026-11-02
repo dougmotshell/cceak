@@ -222,6 +222,59 @@
     }
   }
 
+  /* ---------- Programação da Casa (tabela programacao, só atividades ativas) ---------- */
+  var PROG_CACHE_KEY = "cceak-programacao-cache";
+  var PROG_PATH = "/rest/v1/programacao?select=dia_label,hora_inicio,hora_fim,atividade,quem_pode,ordem" +
+    "&ativo=eq.true&order=ordem.asc,hora_inicio.asc";
+
+  function fmtHora(t) { return t ? String(t).slice(0, 5) : ""; }
+
+  /** Cartões da programação. Texto sempre com textContent; a seção some se não houver atividades. */
+  function renderProgramacao(rows) {
+    var section = document.getElementById("programacao");
+    var list = document.getElementById("programacao-list");
+    if (!section || !list) return;
+    list.textContent = "";
+    (Array.isArray(rows) ? rows : []).forEach(function (p) {
+      if (!p || !p.dia_label || !p.atividade) return;
+      var li = el("li", "card");
+      li.appendChild(el("h3", null, p.dia_label));
+      var horario = fmtHora(p.hora_inicio) + (p.hora_fim ? " às " + fmtHora(p.hora_fim) : "");
+      li.appendChild(el("p", "programacao-horario", horario));
+      li.appendChild(el("p", null, p.atividade));
+      li.appendChild(el("p", "review-meta", "Quem pode participar: " + (p.quem_pode || "Aberto ao público")));
+      list.appendChild(li);
+    });
+    section.hidden = list.childElementCount === 0;
+  }
+
+  function readProgCache() {
+    try {
+      var raw = window.localStorage.getItem(PROG_CACHE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function loadProgramacao() {
+    var controller = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = controller ? setTimeout(function () { controller.abort(); }, 5000) : null;
+    fetch(ENV.supabaseUrl.replace(/\/$/, "") + PROG_PATH, {
+      headers: { apikey: ENV.supabaseAnonKey, Authorization: "Bearer " + ENV.supabaseAnonKey },
+      signal: controller ? controller.signal : undefined,
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (rows) {
+        try { window.localStorage.setItem(PROG_CACHE_KEY, JSON.stringify(rows)); } catch (e) { /* bloqueado */ }
+        renderProgramacao(rows);
+      })
+      .catch(function () { /* Sem rede: mantém o cache ou esconde a seção. */ })
+      .then(function () { if (timer) clearTimeout(timer); });
+  }
+
   /** Endereço, telefone (tel:) e WhatsApp (wa.me), com dígitos validados. */
   function renderLocal(local) {
     var phoneDigits = String(local.phone || "").replace(/\D/g, "");
@@ -303,8 +356,10 @@
   function load() {
     var cached = readCache();
     apply(CONFIG.merge(cached));
+    renderProgramacao(readProgCache());
 
     if (!ENV.supabaseUrl || !ENV.supabaseAnonKey || !window.fetch) return;
+    loadProgramacao();
 
     var controller = typeof AbortController === "function" ? new AbortController() : null;
     var timer = controller ? setTimeout(function () { controller.abort(); }, 5000) : null;

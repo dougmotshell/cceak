@@ -29,7 +29,22 @@ Depois:
 
 - Site: http://localhost:8000
 - Administração: http://localhost:8000/admin/
-- Login de teste: `admin@local.test` / `dev-admin-123`
+- Contas de teste (somente local):
+
+| Papel | E-mail | Senha | Pode |
+|---|---|---|---|
+| Administrador | `admin@local.test` | `dev-admin-123` | Configuração do site e programação |
+| Diretor | `diretor@local.test` | `dev-diretor-123` | Programação |
+| Colaborador | `colaborador@local.test` | `dev-colaborador-123` | Programação |
+
+Dados fictícios: a programação traz os quatro horários reais e duas atividades com prefixo `MOCK` (uma delas oculta no site), para testar a regra de exibição.
+
+Se o ambiente já estava no ar antes da migração 0002, aplique as mudanças sem apagar os dados:
+
+```bash
+docker compose up -d migrate        # reaplica migrações e semente (idempotente)
+docker compose restart postgrest    # recarrega o schema da API
+```
 
 Parar: `docker compose down`. Apagar também os dados: `docker compose down -v`.
 
@@ -40,7 +55,7 @@ Verificar o estado: `docker compose ps` e `docker compose logs -f migrate auth`.
 - Todas as portas do host ficam em `127.0.0.1`. Nada fica acessível pela rede da sua casa ou escritório.
 - `.env` e `docker/local/env.js` são gerados com segredos aleatórios e estão no `.gitignore`. Nunca os versione.
 - Só a chave `anon` é gerada. Não existe chave `service_role` no disco.
-- O usuário `admin@local.test` e a senha `dev-admin-123` existem **somente** no ambiente local, pela semente `docker/local/seed-dev.sql`. Não reutilize essa semente em produção.
+- As contas de teste (`admin@`, `diretor@` e `colaborador@local.test`) existem **somente** no ambiente local, pelas sementes `docker/local/seed-dev.sql` e `docker/local/seed-equipe-dev.sql`. Não reutilize essas sementes em produção.
 - O cadastro público fica desligado (`GOTRUE_DISABLE_SIGNUP`).
 
 ## Diferença para produção
@@ -67,6 +82,7 @@ Para recomeçar do zero: `docker compose down -v && node scripts/gen-local-env.m
 - `docker/local/nginx.conf`: gateway e roteamento.
 - `docker/local/migrate.sh`: ordem de preparação do banco.
 - `docker/local/seed-dev.sql`: administrador de teste (só dev).
+- `docker/local/seed-equipe-dev.sql`: diretor, colaborador e programação fictícia (só dev).
 - `scripts/gen-local-env.mjs`: gera segredos e `env.js` local.
 
 Versão em inglês: `docs/en-us/manual/local-docker-environment.md`.

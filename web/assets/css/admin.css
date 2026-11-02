@@ -3,6 +3,12 @@
  * Classificação da informação (ISO/IEC 27001): Uso Interno
  */
 
+/* .btn define display e vence o atributo hidden; aqui o atributo volta a esconder (ex.: botão Sair antes do login) */
+.admin-wrap [hidden],
+.site-header [hidden] {
+  display: none !important;
+}
+
 .admin-wrap {
   padding-block: clamp(24px, 5vw, 48px);
   display: grid;

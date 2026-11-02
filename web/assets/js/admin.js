@@ -3,8 +3,10 @@
  * Classificação da informação (ISO/IEC 27001): Uso Interno
  *
  * Login por e-mail e senha (Supabase Auth). A sessão fica em sessionStorage (some ao fechar a aba),
- * nunca em localStorage. A autorização real é do banco: só administradores da tabela admins
- * conseguem gravar em site_settings (RLS). Esta tela apenas espelha isso para a experiência.
+ * nunca em localStorage. A autorização real é do banco (RLS):
+ *   - administradores (tabela admins) gerenciam a configuração do site e a programação;
+ *   - diretores e colaboradores (tabela equipe) gerenciam só a programação.
+ * Esta tela apenas espelha isso para a experiência.
  * Todo conteúdo exibido é gravado com textContent; nada vindo do banco vira HTML.
  */
 (function () {
@@ -17,7 +19,9 @@
   var HEX = /^#[0-9a-fA-F]{6}$/;
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { session: null, values: null, dirty: {} };
+  var state = { session: null, values: null, dirty: {}, isAdmin: false, programacao: [], editId: null };
+  var PROG_COLUMNS = "id,dia_label,hora_inicio,hora_fim,atividade,quem_pode,ordem,ativo";
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   var base = (ENV.supabaseUrl || "").replace(/\/$/, "");
 
   /* ---------- utilidades ---------- */
@@ -124,6 +128,9 @@
     setSession(null);
     state.values = null;
     state.dirty = {};
+    state.isAdmin = false;
+    state.programacao = [];
+    resetProgForm();
     showLogin();
     status("Sessão encerrada.", false);
   }
@@ -337,6 +344,152 @@
     });
   }
 
+  /* ---------- programação da Casa ---------- */
+  function fmtHora(t) { return t ? String(t).slice(0, 5) : ""; }
+
+  function progForm() {
+    return {
+      dia: $("prog-dia"), inicio: $("prog-inicio"), fim: $("prog-fim"),
+      atividade: $("prog-atividade"), publico: $("prog-publico"),
+      ordem: $("prog-ordem"), ativo: $("prog-ativo")
+    };
+  }
+
+  /** Valida o formulário e devolve o corpo da linha, ou null com a mensagem de erro. */
+  function readProgForm() {
+    var f = progForm();
+    var dia = f.dia.value.trim();
+    var inicio = f.inicio.value;
+    var fim = f.fim.value;
+    var atividade = f.atividade.value.trim();
+    var publico = f.publico.value.trim() || "Aberto ao público";
+    var ordem = parseInt(f.ordem.value, 10);
+    var errors = [];
+    if (!dia || dia.length > 80) errors.push("Dia ou periodicidade: informe até 80 caracteres.");
+    if (!inicio) errors.push("Início: informe o horário.");
+    if (fim && inicio && fim <= inicio) errors.push("Término deve ser depois do início.");
+    if (!atividade || atividade.length > 400) errors.push("Atividade: informe até 400 caracteres.");
+    if (publico.length > 120) errors.push("Quem pode participar: máximo de 120 caracteres.");
+    if (isNaN(ordem) || ordem < 0 || ordem > 999) errors.push("Ordem: use um número de 0 a 999.");
+    if (errors.length) return { errors: errors };
+    return {
+      errors: [],
+      body: {
+        dia_label: dia,
+        hora_inicio: inicio,
+        hora_fim: fim || null,
+        atividade: atividade,
+        quem_pode: publico,
+        ordem: ordem,
+        ativo: f.ativo.checked
+      }
+    };
+  }
+
+  function resetProgForm() {
+    var f = progForm();
+    $("prog-form").reset();
+    f.publico.value = "Aberto ao público";
+    f.ordem.value = "0";
+    f.ativo.checked = true;
+    state.editId = null;
+    $("prog-id").value = "";
+    $("prog-form-titulo").textContent = "Nova atividade";
+    $("prog-submit").textContent = "Adicionar atividade";
+    $("prog-cancel").hidden = true;
+  }
+
+  function startEdit(item) {
+    var f = progForm();
+    state.editId = item.id;
+    $("prog-id").value = item.id;
+    f.dia.value = item.dia_label || "";
+    f.inicio.value = fmtHora(item.hora_inicio);
+    f.fim.value = fmtHora(item.hora_fim);
+    f.atividade.value = item.atividade || "";
+    f.publico.value = item.quem_pode || "Aberto ao público";
+    f.ordem.value = String(item.ordem == null ? 0 : item.ordem);
+    f.ativo.checked = item.ativo !== false;
+    $("prog-form-titulo").textContent = "Editar atividade";
+    $("prog-submit").textContent = "Salvar alterações";
+    $("prog-cancel").hidden = false;
+    f.dia.focus();
+  }
+
+  function saveProg(event) {
+    event.preventDefault();
+    var result = readProgForm();
+    if (result.errors.length) {
+      status("Corrija antes de salvar: " + result.errors.join(" "), true);
+      return;
+    }
+    var editing = state.editId;
+    var req = editing && UUID.test(editing)
+      ? api("/rest/v1/programacao?id=eq." + encodeURIComponent(editing), { method: "PATCH", headers: { Prefer: "return=minimal" }, body: result.body })
+      : api("/rest/v1/programacao", { method: "POST", headers: { Prefer: "return=minimal" }, body: result.body });
+    $("prog-submit").disabled = true;
+    status("Salvando atividade…", false);
+    req.then(function () {
+      resetProgForm();
+      status("Atividade salva. A alteração aparece no site em instantes.", false);
+      return loadProgramacao();
+    }).catch(function (err) {
+      status("Não foi possível salvar a atividade. Sua sessão pode ter expirado. Detalhe: " + err.message, true);
+    }).then(function () { $("prog-submit").disabled = false; });
+  }
+
+  function deleteProg(item) {
+    status("Removendo atividade…", false);
+    api("/rest/v1/programacao?id=eq." + encodeURIComponent(item.id), {
+      method: "DELETE",
+      headers: { Prefer: "return=minimal" }
+    }).then(function () {
+      if (state.editId === item.id) resetProgForm();
+      status("Atividade removida.", false);
+      return loadProgramacao();
+    }).catch(function (err) {
+      status("Não foi possível remover a atividade. Detalhe: " + err.message, true);
+    });
+  }
+
+  /** Botões de uma atividade. Remover pede confirmação na própria linha (sem diálogo do navegador). */
+  function progActions(item) {
+    var wrap = el("div", "admin-actions");
+    wrap.appendChild(actionButton("Editar", false, function () { startEdit(item); }));
+    wrap.appendChild(actionButton("Remover", false, function () {
+      wrap.textContent = "";
+      wrap.appendChild(el("p", "help", "Remover esta atividade? Esta ação não pode ser desfeita."));
+      wrap.appendChild(actionButton("Confirmar remoção", false, function () { deleteProg(item); }));
+      wrap.appendChild(actionButton("Cancelar", false, function () {
+        wrap.parentNode.replaceChild(progActions(item), wrap);
+      }));
+      wrap.querySelector("button").focus();
+    }));
+    return wrap;
+  }
+
+  function renderProgramacao() {
+    var list = $("prog-list");
+    list.textContent = "";
+    $("prog-empty").hidden = state.programacao.length > 0;
+    state.programacao.forEach(function (item) {
+      var li = el("li", "admin-item");
+      var horario = fmtHora(item.hora_inicio) + (item.hora_fim ? " às " + fmtHora(item.hora_fim) : "");
+      li.appendChild(el("h3", null, item.dia_label + " · " + horario + (item.ativo === false ? " · oculta no site" : "")));
+      li.appendChild(el("p", null, item.atividade));
+      li.appendChild(el("p", "help", item.quem_pode || ""));
+      li.appendChild(progActions(item));
+      list.appendChild(li);
+    });
+  }
+
+  function loadProgramacao() {
+    return api("/rest/v1/programacao?select=" + PROG_COLUMNS + "&order=ordem.asc,hora_inicio.asc").then(function (rows) {
+      state.programacao = rows || [];
+      renderProgramacao();
+    });
+  }
+
   /* ---------- telas ---------- */
   function showLogin() {
     $("admin-login").hidden = false;
@@ -350,22 +503,37 @@
     $("admin-login").hidden = true;
     $("admin-panel").hidden = false;
     $("logout").hidden = false;
-    $("admin-session-info").textContent = "Conectado como " + (state.session.email || "administrador");
+    var papel = state.isAdmin ? "administrador" : "equipe";
+    $("admin-session-info").textContent = "Conectado como " + (state.session.email || papel) + " (" + papel + ")";
   }
 
+  /** Quem entra: administradores (admins) ou equipe (equipe). A RLS limita o que cada um grava. */
   function loadAll() {
-    status("Carregando configuração…", false);
-    // RLS: a consulta só retorna linha se a conta for administradora.
+    status("Carregando…", false);
+    var isAdmin = false;
     return api("/rest/v1/admins?select=user_id").then(function (rows) {
-      if (!rows || rows.length === 0) throw new Error("NOT_ADMIN");
-      return api("/rest/v1/site_settings?select=key,value");
+      isAdmin = !!(rows && rows.length);
+      return api("/rest/v1/equipe?select=papel");
     }).then(function (rows) {
-      var published = {};
-      (rows || []).forEach(function (r) { published[r.key] = r.value; });
-      state.values = CONFIG.merge(published);
+      if (!isAdmin && !(rows && rows.length)) throw new Error("NOT_ADMIN");
+      state.isAdmin = isAdmin;
+      $("config-panel").hidden = !isAdmin;
+      $("prog-panel").hidden = false;
       showPanel();
-      rerender();
-      status("Configuração carregada. Altere os campos e salve cada seção.", false);
+      if (!isAdmin) return null;
+      // Configuração do site: só administradores leem o rascunho completo.
+      return api("/rest/v1/site_settings?select=key,value").then(function (settings) {
+        var published = {};
+        (settings || []).forEach(function (r) { published[r.key] = r.value; });
+        state.values = CONFIG.merge(published);
+        rerender();
+      });
+    }).then(function () {
+      return loadProgramacao();
+    }).then(function () {
+      status(isAdmin
+        ? "Carregado. Altere a programação ou a configuração e salve."
+        : "Carregado. Você pode cadastrar, editar e remover atividades da programação.", false);
     });
   }
 
@@ -385,7 +553,7 @@
         revokeRemote(state.session && state.session.access_token);
         setSession(null);
         status(err.message === "NOT_ADMIN"
-          ? "Esta conta não tem permissão de administração."
+          ? "Esta conta não tem permissão de acesso à administração."
           : "E-mail ou senha inválidos.", true);
         showLogin();
       })
@@ -401,6 +569,11 @@
     }
     $("login-form").addEventListener("submit", handleLogin);
     $("logout").addEventListener("click", signOut);
+    $("prog-form").addEventListener("submit", saveProg);
+    $("prog-cancel").addEventListener("click", function () {
+      resetProgForm();
+      status("Edição cancelada.", false);
+    });
 
     var saved = getSession();
     if (saved && saved.access_token) {

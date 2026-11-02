@@ -49,13 +49,69 @@
           <button id="login-submit" class="btn btn--primary" type="submit">Entrar</button>
         </form>
         <p class="help">Não há cadastro público. Novos administradores são criados pelo responsável técnico.</p>
+        <p><a class="btn btn--ghost" href="/">Voltar ao site</a></p>
       </section>
 
       <section id="admin-panel" aria-labelledby="painel-titulo" hidden>
-        <h2 id="painel-titulo">Configuração do site</h2>
-        <p class="lead">Altere os textos, as redes e os recursos. Cada seção é salva separadamente e aparece no site em instantes.</p>
+        <h1 id="painel-titulo" class="visually-hidden">Administração</h1>
         <p><a href="/">Ver o site</a></p>
-        <div id="admin-sections"></div>
+
+        <section id="prog-panel" class="admin-card" aria-labelledby="prog-titulo" hidden>
+          <h2 id="prog-titulo">Programação da Casa</h2>
+          <p class="lead">Cadastre, edite ou remova as atividades. Só as atividades marcadas como exibidas aparecem no site.</p>
+
+          <form id="prog-form" novalidate>
+            <h3 id="prog-form-titulo">Nova atividade</h3>
+            <input type="hidden" id="prog-id" value="">
+            <label class="field">
+              <span class="field-label">Dia ou periodicidade *</span>
+              <input id="prog-dia" name="dia" type="text" maxlength="80" list="prog-dias-sugeridos" required>
+            </label>
+            <datalist id="prog-dias-sugeridos">
+              <option value="Sexta-feira"></option>
+              <option value="Sábado"></option>
+              <option value="Último sábado de cada mês"></option>
+            </datalist>
+            <label class="field">
+              <span class="field-label">Início *</span>
+              <input id="prog-inicio" name="inicio" type="time" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Término (opcional)</span>
+              <input id="prog-fim" name="fim" type="time">
+            </label>
+            <label class="field">
+              <span class="field-label">Atividade *</span>
+              <textarea id="prog-atividade" name="atividade" rows="3" maxlength="400" required></textarea>
+            </label>
+            <label class="field">
+              <span class="field-label">Quem pode participar</span>
+              <input id="prog-publico" name="publico" type="text" maxlength="120" value="Aberto ao público">
+            </label>
+            <label class="field">
+              <span class="field-label">Ordem (menor número aparece primeiro)</span>
+              <input id="prog-ordem" name="ordem" type="number" min="0" max="999" step="1" value="0">
+            </label>
+            <label class="check">
+              <input id="prog-ativo" type="checkbox" checked>
+              Exibir no site
+            </label>
+            <div class="admin-actions">
+              <button id="prog-submit" class="btn btn--primary" type="submit">Adicionar atividade</button>
+              <button id="prog-cancel" class="btn btn--ghost" type="button" hidden>Cancelar edição</button>
+            </div>
+          </form>
+
+          <h3>Atividades cadastradas</h3>
+          <p id="prog-empty" class="help" hidden>Nenhuma atividade cadastrada.</p>
+          <ul id="prog-list" class="admin-list"></ul>
+        </section>
+
+        <div id="config-panel" hidden>
+          <h2 id="config-titulo">Configuração do site</h2>
+          <p class="lead">Altere os textos, as redes e os recursos. Cada seção é salva separadamente e aparece no site em instantes.</p>
+          <div id="admin-sections"></div>
+        </div>
       </section>
     </div>
   </main>

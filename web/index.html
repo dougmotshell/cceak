@@ -53,14 +53,11 @@
       <div class="header-actions">
         <button class="theme-toggle" id="theme-toggle" type="button"><span class="theme-glyph" aria-hidden="true">◐</span><span class="visually-hidden">Alternar tema claro e escuro</span></button>
         <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <a class="btn btn--ghost admin-link" href="/admin/" aria-label="Área administrativa" title="Área administrativa"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></a>
       </div>
       <nav class="nav" id="site-nav" aria-label="Principal" hidden>
         <ul class="nav-list">
-          <li><a href="#recursos">Recursos</a></li>
-          <li><a href="#como-funciona">Como funciona</a></li>
-          <li><a href="#acessibilidade">Acessibilidade</a></li>
           <li><a href="#instalar">Instalar</a></li>
-          <li><a href="#perguntas">Perguntas</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
       </nav>
@@ -212,7 +209,7 @@
       </div>
     </section>
 
-    <section class="section" id="avaliacoes" aria-labelledby="avaliacoes-titulo">
+    <section class="section section--alt" id="avaliacoes" aria-labelledby="avaliacoes-titulo">
       <div class="container">
         <h2 id="avaliacoes-titulo" class="reveal">O que dizem sobre a Casa</h2>
         <div id="reviews-wrap" hidden>
@@ -221,6 +218,13 @@
             <a id="reviews-link" class="btn btn--ghost" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver avaliações no Google (abre em nova aba)</a>
           </p>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="programacao" aria-labelledby="programacao-titulo" hidden>
+      <div class="container">
+        <h2 id="programacao-titulo" class="reveal">Programação da Casa</h2>
+        <ul class="grid" id="programacao-list" role="list"></ul>
       </div>
     </section>
 
@@ -236,9 +240,6 @@
           <p><a id="whatsapp-link" href="https://wa.me/5521977388945" target="_blank" rel="noopener noreferrer" hidden>Falar no WhatsApp (abre em nova aba)</a></p>
           <p id="hours-wrap"><strong>Horário:</strong> <span id="hours-text"></span></p>
           <p><a id="business-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver ficha no Google Maps (abre em nova aba)</a></p>
-          <figure class="casa-figure">
-            <img src="/assets/img/casa/fachada.jpg" alt="Fachada da Casa de Cultura Espírita Allan Kardec, com a faixa azul com o nome da Casa e o retrato de Allan Kardec" width="1200" height="675" loading="lazy" decoding="async">
-          </figure>
         </div>
         <div class="reveal map-box" id="map-box">
           <button class="btn btn--primary" id="map-load" type="button">Carregar mapa</button>

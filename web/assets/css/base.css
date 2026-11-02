@@ -320,6 +320,23 @@ a {
   gap: var(--space-2);
 }
 
+/* Acesso à área administrativa: ícone no último item do cabeçalho, à extrema direita */
+.admin-link {
+  width: var(--target);
+  height: var(--target);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-link svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  max-width: none;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -403,6 +420,11 @@ a {
   line-height: 1;
 }
 
+/* Botão Menu só existe no celular; no desktop a navegação aparece inteira no cabeçalho */
+.menu-toggle {
+  display: none;
+}
+
 /* No desktop a navegação é sempre visível, mesmo com o atributo hidden do JS */
 .nav[hidden] {
   display: block;
@@ -431,6 +453,18 @@ a {
 
   .nav-list a {
     padding-inline: var(--space-2);
+  }
+}
+
+/* Desktop largo: links de navegação juntos dos botões, à direita do cabeçalho */
+@media (min-width: 1041px) {
+  .nav {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .header-actions {
+    order: 2;
   }
 }
 
@@ -846,6 +880,12 @@ a {
 
 .contact-links + .contact-links {
   margin-top: var(--space-3);
+}
+
+/* ---------- Programação da Casa ---------- */
+.programacao-horario {
+  font-weight: 600;
+  color: var(--text);
 }
 
 /* ---------- Rodapé ---------- */

@@ -25,6 +25,6 @@ until q "select 1 from information_schema.columns where table_schema='auth' and 
   sleep 2
 done
 
-echo "4. aplicando migração 0001 e semente de desenvolvimento..."
-psql -v ON_ERROR_STOP=1 -f /sql/0001_site_settings.sql -f /sql/seed-dev.sql
+echo "4. aplicando migrações 0001 e 0002 e semente de desenvolvimento..."
+psql -v ON_ERROR_STOP=1 -f /sql/0001_site_settings.sql -f /sql/0002_programacao_equipe.sql -f /sql/seed-dev.sql -f /sql/seed-equipe-dev.sql
 echo "migração concluída"
