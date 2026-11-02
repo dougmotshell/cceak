@@ -52,7 +52,7 @@
 
       <div class="header-actions">
         <button class="theme-toggle" id="theme-toggle" type="button"><span class="theme-glyph" aria-hidden="true">◐</span><span class="visually-hidden">Alternar tema claro e escuro</span></button>
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Abrir menu"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
         <a class="btn btn--ghost admin-link" href="/admin/" aria-label="Área administrativa" title="Área administrativa"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></a>
       </div>
       <nav class="nav" id="site-nav" aria-label="Principal" hidden>
@@ -60,6 +60,7 @@
           <li><a href="/estudos/">Estudos</a></li>
           <li><a href="#instalar">Instalar</a></li>
           <li><a href="#contato">Contato</a></li>
+          <li class="nav-admin"><a href="/admin/">Área administrativa</a></li>
         </ul>
       </nav>
     </div>
@@ -239,12 +240,14 @@
           <p id="cep-wrap" hidden>CEP <span data-cfg="local.cep"></span></p>
           <p>Telefone: <a id="phone-link" href="tel:+552197738894">(21) 97738-8945</a></p>
           <p><a id="whatsapp-link" href="https://wa.me/5521977388945" target="_blank" rel="noopener noreferrer" hidden>Falar no WhatsApp (abre em nova aba)</a></p>
-          <p id="hours-wrap"><strong>Horário:</strong> <span id="hours-text"></span></p>
           <p><a id="business-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver ficha no Google Maps (abre em nova aba)</a></p>
         </div>
         <div class="reveal map-box" id="map-box">
-          <button class="btn btn--primary" id="map-load" type="button">Carregar mapa</button>
-          <p class="help">O mapa é carregado pelo Google somente quando você clicar.</p>
+          <div class="map-placeholder" id="map-placeholder">
+            <button class="btn btn--primary" id="map-load" type="button">Carregar mapa</button>
+            <p class="help">O mapa é fornecido pelo Google. Ao carregá-lo, seu navegador se conecta aos servidores do Google. Ele é carregado quando você clica no botão ou quando esta seção chega à tela. <a href="/privacidade#mapa">Saiba mais</a>.</p>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Cultura+Esp%C3%ADrita+Allan+Kardec" target="_blank" rel="noopener noreferrer">Abrir no Google Maps (abre em nova aba)</a></p>
+          </div>
         </div>
       </div>
     </section>
@@ -293,7 +296,7 @@
 
   <section class="cookie-banner" id="cookie-banner" aria-labelledby="cookie-titulo" hidden>
     <div class="cookie-inner">
-      <p id="cookie-titulo">Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não usamos cookies de rastreamento. <a href="/cookies">Saiba mais sobre cookies</a>.</p>
+      <p id="cookie-titulo">Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não usamos cookies de rastreamento. O mapa de localização é do Google e pode gravar cookies próprios ao ser carregado. <a href="/cookies">Saiba mais sobre cookies</a>.</p>
       <div class="cookie-actions">
         <button class="btn btn--ghost" type="button" data-consent="reject">Recusar opcionais</button>
         <button class="btn btn--primary" type="button" data-consent="accept">Aceitar todos</button>

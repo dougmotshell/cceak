@@ -292,35 +292,44 @@
     });
     var cepWrap = document.getElementById("cep-wrap");
     if (cepWrap) cepWrap.hidden = !local.cep;
-    var hours = document.getElementById("hours-text");
-    if (hours) {
-      hours.textContent = local.hours || "";
-      hours.parentElement.hidden = !local.hours;
-    }
     var mapLink = document.getElementById("business-link");
     var businessHref = safeHref(local.business_url);
     if (mapLink) {
       if (businessHref && businessHref.indexOf("https://") === 0) mapLink.setAttribute("href", businessHref);
       mapLink.hidden = !businessHref;
     }
-    // Mapa: iframe só é criado após o clique (LGPD: nada de Google antes da escolha do visitante).
+    setupMap();
+  }
+
+  /* ---------- Mapa do Google: carrega só por clique ou quando a seção chega à tela ---------- */
+  var MAP_SRC = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d353.000509880103!2d-43.25112448520865!3d-22.6429312392784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9973579c4176a9%3A0xdc211daa60fc2910!2sCasa%20de%20Cultura%20Esp%C3%ADrita%20Allan%20Kardec!5e0!3m2!1sen!2sbr!4v1686405496701!5m2!1sen!2sbr";
+  var mapMounted = false;
+
+  function mountMap(box) {
+    if (mapMounted || !box) return;
+    mapMounted = true;
+    var frame = el("iframe", "map-frame");
+    frame.setAttribute("title", "Mapa: Casa de Cultura Espírita Allan Kardec no Google Maps");
+    frame.setAttribute("loading", "lazy");
+    frame.setAttribute("src", MAP_SRC);
+    box.textContent = "";
+    box.appendChild(frame);
+  }
+
+  function setupMap() {
     var box = document.getElementById("map-box");
-    if (box && !box.dataset.ready) {
-      box.dataset.ready = "1";
-      var query = local.map_query || [local.address_line, local.city].filter(Boolean).join(", ");
-      var button = document.getElementById("map-load");
-      if (button) {
-        button.addEventListener("click", function () {
-          var frame = el("iframe");
-          frame.setAttribute("title", "Mapa: " + query);
-          frame.setAttribute("loading", "lazy");
-          frame.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-          frame.setAttribute("src", "https://www.google.com/maps?q=" + encodeURIComponent(query) + "&output=embed");
-          frame.className = "map-frame";
-          box.textContent = "";
-          box.appendChild(frame);
-        });
-      }
+    if (!box || box.dataset.mapReady) return;
+    box.dataset.mapReady = "1";
+    var button = document.getElementById("map-load");
+    if (button) button.addEventListener("click", function () { mountMap(box); });
+    if (typeof IntersectionObserver === "function") {
+      var io = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) {
+          io.disconnect();
+          mountMap(box);
+        }
+      }, { rootMargin: "200px 0px" });
+      io.observe(box);
     }
   }
 

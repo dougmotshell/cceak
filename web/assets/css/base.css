@@ -420,6 +420,19 @@ a {
   line-height: 1;
 }
 
+/* Ícone hambúrguer do botão Menu (svg tem max-width global; aqui o tamanho é fixo) */
+.menu-toggle svg {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  max-width: none;
+}
+
+/* Item de administração do menu: só aparece no celular (ver regra de max-width: 800px) */
+.nav-list .nav-admin {
+  display: none;
+}
+
 /* Botão Menu só existe no celular; no desktop a navegação aparece inteira no cabeçalho */
 .menu-toggle {
   display: none;
@@ -473,6 +486,18 @@ a {
   .menu-toggle {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: var(--target);
+    padding: 0;
+  }
+
+  /* Botão de administração sai do cabeçalho e vai para dentro do menu */
+  .header-actions .admin-link {
+    display: none;
+  }
+
+  .nav-list .nav-admin {
+    display: flex;
   }
 
   .nav {
