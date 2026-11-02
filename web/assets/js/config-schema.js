@@ -103,7 +103,7 @@
       fields: [
         { name: "email", label: "E-mail de contato", type: "email" }
       ],
-      defaults: { email: "" }
+      defaults: { email: "allankardecceak@gmail.com" }
     },
     {
       key: "social",

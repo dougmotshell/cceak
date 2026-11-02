@@ -1079,6 +1079,7 @@ td {
 
 .hero-banner .hero-banner-light {
   display: var(--hero-banner-light);
+  mix-blend-mode: multiply; /* o fundo branco da logo se funde ao creme */
   width: min(370px, 100%);
   margin-inline: auto;
   padding-block: 16px;
