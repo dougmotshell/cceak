@@ -29,12 +29,3 @@ coverage/
 Thumbs.db
 .idea/
 *.swp
-
-# Harness report (regenerated; not a source)
-harness-report.md
-harness-badge.svg
-
-# NOT ignored on purpose: the generated AI surfaces (.claude/skills/,
-# .claude/commands/, .agents/, .codex/, .github/prompts/, .github/instructions/).
-# They are committed so a fresh clone works without running the generator.
-# harness-bootstrap <<<
