@@ -1,0 +1,18 @@
+---
+name: seguranca-e-marca
+description: Decisões duráveis sobre marca intelie/classificação e sobre a postura de segurança (SOC 2, sem promessa de invulnerabilidade) do cceak.
+metadata:
+  type: project
+---
+
+# Segurança e marca
+
+- **Marca e classificação:** a política da organização exige marca intelie e classificação ISO/IEC 27001 em todo artefato gerado. Um pedido para remover a marca conflita com essa política; a marca foi mantida como campo editável (`brand.company`), e a remoção depende de autorização da organização.
+  **Why:** a política de organização tem prioridade sobre preferência individual.
+  **How to apply:** não remova "Intelie" de páginas, metadados ou documentos sem confirmação explícita de autorização.
+
+- **Postura de segurança:** não prometer que o sistema "não será hackeado". Entregar controles verificáveis (`CTRL-xx` em `docs/pt-br/architecture/controles-seguranca-soc2.md`) e prontidão SOC 2, com a atestação feita por auditor independente.
+  **Why:** nenhum controle garante invulnerabilidade, e SOC 2 é atestado de terceiro.
+  **How to apply:** ao revisar, use `scripts/security-config-check.mjs` e o agente `appsec-soc2`.
+
+- **Configuração sem código:** o conteúdo do site fica em `site_settings` no Supabase (RLS: leitura pública, escrita só por `admins`). Chave pública em `web/assets/js/env.js`; nunca `service_role` no repositório.

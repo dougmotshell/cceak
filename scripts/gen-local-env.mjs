@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+/*
+ * Gera os segredos do ambiente local (Docker Compose) sem gravá-los no repositório.
+ * Classificação da informação (ISO/IEC 27001): Uso Interno
+ *
+ * Gera:
+ *  - .env                    POSTGRES_PASSWORD e JWT_SECRET aleatórios (gitignored, modo 0600)
+ *  - docker/local/env.js     configuração pública do site apontando para o gateway local (gitignored)
+ *
+ * Só a chave anon é gerada, porque é a única que o navegador usa. A service_role
+ * não é criada: nada local precisa dela, e assim não há segredo privilegiado no disco.
+ * Idempotente: não sobrescreve nada sem --force.
+ * Uso: node scripts/gen-local-env.mjs [--force]
+ */
+import { randomBytes, createHmac } from "node:crypto";
+import { existsSync, writeFileSync, chmodSync, mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
+const force = process.argv.includes("--force");
+const envPath = join(repo, ".env"); // o Compose lê .env automaticamente
+const envJsPath = join(repo, "docker", "local", "env.js");
+
+if (existsSync(envPath) && !force) {
+  console.log(".env já existe. Use --force para gerar novos segredos (isso invalida sessões e dados de login locais).");
+} else {
+  const postgresPassword = randomBytes(24).toString("base64url");
+  const jwtSecret = randomBytes(48).toString("base64url"); // HS256 exige segredo longo
+  writeFileSync(envPath, [
+    "# Gerado por scripts/gen-local-env.mjs. NÃO versionar.",
+    `POSTGRES_PASSWORD=${postgresPassword}`,
+    `JWT_SECRET=${jwtSecret}`,
+    "",
+  ].join("\n"));
+  chmodSync(envPath, 0o600);
+
+  // Chave anon: JWT HS256 com role=anon, válido por 10 anos (ambiente local).
+  const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+  const now = Math.floor(Date.now() / 1000);
+  const header = b64({ alg: "HS256", typ: "JWT" });
+  const payload = b64({ iss: "supabase-local", role: "anon", iat: now, exp: now + 10 * 365 * 86400 });
+  const sig = createHmac("sha256", jwtSecret).update(`${header}.${payload}`).digest("base64url");
+  const anonKey = `${header}.${payload}.${sig}`;
+
+  mkdirSync(dirname(envJsPath), { recursive: true });
+  writeFileSync(envJsPath, [
+    "/* Gerado por scripts/gen-local-env.mjs. Ambiente local apenas. Não versionar. */",
+    "window.CCEAK_ENV = {",
+    '  supabaseUrl: "http://localhost:8000",',
+    `  supabaseAnonKey: "${anonKey}"`,
+    "};",
+    "",
+  ].join("\n"));
+  console.log("ok  .env (0600) e docker/local/env.js gerados");
+}

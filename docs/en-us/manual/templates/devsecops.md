@@ -1,0 +1,16 @@
+# Pipeline security triage sheet · cceak
+
+Brand: Intelie · cceak.
+Information classification (ISO/IEC 27001): Internal Use (Uso Interno).
+
+Short English version. The Portuguese source of truth is [`docs/pt-br/manual/templates/devsecops.md`](../../../pt-br/manual/templates/devsecops.md). Never record a secret value, token or key: record only path, line and type. Use `TODO:` for missing information.
+
+## Sections
+
+1. **Identification:** date (UTC), triage owner, source (Semgrep, OSV-Scanner, gitleaks, Dependabot, manual review or `scripts/devsecops-check.mjs`), identifier (rule, CVE, GHSA or DSO-xx), related control (CTRL-xx).
+2. **Finding:** file and line, objective description, affected package, action or image with current version, fixed version or recommended action, whether the vulnerable path is reached, exposure.
+3. **Classification:** severity (critical, high, medium, low, false positive), exploitable in practice, reachable in code, suggested deadline, one-sentence justification.
+4. **Decision:** fix now with its own PR and green gate, schedule, accept risk (owner, expiry, reason), or false positive with justification recorded in the tool configuration.
+5. **Verification after the fix:** `scripts/devsecops-check.mjs` without failures, green `security` workflow on the fix commit, alert closed with a reference to the fix.
+6. **If the finding is a secret:** value not reproduced anywhere, rotation requested to the owner, assessed as an incident (CTRL-10), history rewrite only if authorized.
+7. **Evidence record (optional):** when the finding supports an SOC 2 control, copy the evidence template to `docs/pt-br/architecture/evidencias/AAAA-MM-DD-CTRL-xx.md`. Never include secrets or personal data.

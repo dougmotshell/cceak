@@ -29,3 +29,7 @@ coverage/
 Thumbs.db
 .idea/
 *.swp
+
+# Ambiente local Docker (segredos gerados)
+.env.local
+docker/local/env.js

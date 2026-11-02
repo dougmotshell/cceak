@@ -1,0 +1,62 @@
+# Checklist de PWA: instalação, offline e atualização
+
+Classificação da informação (ISO/IEC 27001): Uso Interno. Marca: Intelie.
+
+Preencha a cada mudança em `web/manifest.webmanifest`, `web/sw.js` ou nos ícones. Não cole URL real de produção, domínio de cliente nem dado de usuário.
+
+## Identificação
+
+- **Mudança:** TODO:
+- **Versão do cache antes / depois (`VERSION`):** TODO: / TODO:
+- **Ambiente de teste:** TODO: (homologação, HTTPS obrigatório)
+- **Navegador e versão:** TODO:
+- **Responsável:** TODO:
+- **Data (UTC):** AAAA-MM-DDTHH:MM
+
+## 1. Checagem automatizada
+
+- [ ] `node scripts/pwa-check.mjs` sem falhas. Saída resumida: TODO:
+- [ ] Avisos revisados e justificados: TODO:
+
+## 2. Manifesto e ícones
+
+- [ ] `name`, `short_name`, `start_url`, `scope`, `display` e `lang` (pt-BR) corretos.
+- [ ] Ícones 192 e 512 em PNG, com dimensões iguais às declaradas.
+- [ ] Ícone `maskable` com área segura.
+- [ ] Cores de tema e de fundo conferidas no modo claro e escuro.
+
+## 3. Service worker e cache
+
+- [ ] `VERSION` aumentou se `SHELL` mudou.
+- [ ] `SHELL` contém só o shell necessário offline; sem `/admin`, sem dado, sem query.
+- [ ] `/offline.html` está em `SHELL`.
+- [ ] Caches de versões antigas são removidos na ativação.
+
+## 4. Teste manual de instalação
+
+- [ ] Opção "instalar" disponível no navegador de teste.
+- [ ] App abre em modo independente (standalone), com nome e ícone corretos.
+- [ ] Atalho "Privacidade" funciona no app instalado.
+
+## 5. Teste manual de offline
+
+- [ ] Com a rede desligada, a página inicial abre a partir do cache.
+- [ ] Página não cacheada mostra `offline.html`.
+- [ ] Área administrativa não aparece em cache (Cache Storage).
+
+## 6. Teste manual de atualização
+
+- [ ] Aba antiga aberta; nova versão publicada em homologação.
+- [ ] Ao recarregar, o conteúdo novo aparece sem limpar o cache à mão.
+
+## 7. Auditoria automatizada
+
+- [ ] Lighthouse (categoria PWA ou instalabilidade) sem erro de critério. Pontuação e data: TODO:
+
+## Resultado
+
+- [ ] Aprovado
+- [ ] Aprovado com ressalvas: TODO:
+- [ ] Bloqueado: TODO:
+
+Pendências (testes não feitos, dependência de produção): TODO:

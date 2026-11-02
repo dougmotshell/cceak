@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+/*
+ * Verificação estrutural de legendas SRT e VTT sem rede e sem dependências.
+ * Classificação da informação (ISO/IEC 27001): Uso Interno
+ *
+ * Confere: BOM, numeração sequencial (SRT), cabeçalho WEBVTT (VTT), formato dos tempos,
+ * início menor que fim, início em ordem crescente, texto não vazio e no máximo duas
+ * linhas por bloco. Sobreposição e largura acima de 42 caracteres são avisos.
+ * Saída: falhas e avisos por arquivo; código 1 se houver alguma falha, 0 caso contrário.
+ *
+ * Uso: node scripts/subtitle-check.mjs <arquivo.srt|arquivo.vtt> [outro ...]
+ */
+import { readFileSync } from "node:fs";
+import { extname, relative } from "node:path";
+
+const MAX_LINES = 2;
+const MAX_LINE_WIDTH = 42; // referência de legibilidade; confirmar na documentação de legendas do YouTube
+
+// Tempo: [HH:]MM:SS(,|.)mmm. SRT usa vírgula; VTT usa ponto.
+const TIME = "(\\d{2}(?::\\d{2}){1,2}[.,]\\d{3})";
+const SRT_TIMING = new RegExp(`^${TIME}\\s+-->\\s+${TIME}`);
+const VTT_TIMING = new RegExp(`^${TIME}\\s+-->\\s+${TIME}`);
+
+/** Converte "[HH:]MM:SS,mmm" ou "[HH:]MM:SS.mmm" em milissegundos. */
+function toMs(stamp) {
+  const parts = stamp.split(/[:.,]/).map(Number);
+  if (parts.length === 3) parts.unshift(0);
+  const [h, m, s, ms] = parts;
+  return ((h * 60 + m) * 60 + s) * 1000 + ms;
+}
+
+function checkFile(file) {
+  const failures = [];
+  const warnings = [];
+  const raw = readFileSync(file, "utf8");
+  if (raw.charCodeAt(0) === 0xfeff) warnings.push("arquivo começa com BOM (aceito; prefira UTF-8 sem BOM)");
+
+  const ext = extname(file).toLowerCase();
+  if (ext !== ".srt" && ext !== ".vtt") {
+    return { failures: [`extensão não suportada: ${ext || "(nenhuma)"}`], warnings };
+  }
+  const isVtt = ext === ".vtt";
+  const timingRe = isVtt ? VTT_TIMING : SRT_TIMING;
+
+  const text = raw.replace(/^﻿/, "").replace(/\r\n?/g, "\n").trim();
+  if (!text) return { failures: ["arquivo vazio"], warnings };
+
+  let blocks = text.split(/\n\s*\n+/);
+  if (isVtt) {
+    if (!/^WEBVTT\b/.test(blocks[0].split("\n")[0].trim())) {
+      failures.push('cabeçalho ausente: a primeira linha deve ser "WEBVTT"');
+    }
+    blocks = blocks.slice(1);
+  }
+
+  let expectedIndex = 1;
+  let previousStart = -1;
+  let previousEnd = -1;
+  let cueCount = 0;
+
+  blocks.forEach((block, i) => {
+    const lines = block.split("\n");
+    const label = `bloco ${i + 1}`;
+
+    // Blocos NOTE, STYLE e REGION do VTT não são legendas.
+    if (isVtt && /^(NOTE|STYLE|REGION)\b/.test(lines[0])) return;
+
+    const timingIndex = lines.findIndex((l) => l.includes("-->"));
+    if (timingIndex === -1) {
+      failures.push(`${label}: linha de tempo "-->" não encontrada`);
+      return;
+    }
+
+    if (!isVtt) {
+      if (timingIndex !== 1 || !/^\d+$/.test(lines[0].trim())) {
+        failures.push(`${label}: numeração ausente ou linha de tempo fora de posição`);
+      } else if (Number(lines[0]) !== expectedIndex) {
+        failures.push(`${label}: numeração ${lines[0]} encontrada, esperado ${expectedIndex}`);
+      }
+      expectedIndex += 1;
+    }
+
+    const timing = lines[timingIndex].trim();
+    const match = timing.match(timingRe);
+    if (!match) {
+      failures.push(`${label}: tempo ${isVtt ? "VTT" : "SRT"} inválido: "${timing}"`);
+      return;
+    }
+    const startMs = toMs(match[1]);
+    const endMs = toMs(match[2]);
+
+    if (startMs >= endMs) failures.push(`${label}: início não é menor que o fim (${timing})`);
+    if (startMs < previousStart) failures.push(`${label}: início fora de ordem em relação ao bloco anterior`);
+    if (startMs < previousEnd) warnings.push(`${label}: sobrepõe o bloco anterior`);
+    previousStart = startMs;
+    previousEnd = endMs;
+
+    const body = lines.slice(timingIndex + 1);
+    if (body.every((l) => !l.trim())) failures.push(`${label}: texto vazio`);
+    if (body.length > MAX_LINES) failures.push(`${label}: ${body.length} linhas, o máximo é ${MAX_LINES}`);
+    for (const line of body) {
+      if (line.length > MAX_LINE_WIDTH) {
+        warnings.push(`${label}: linha com ${line.length} caracteres (referência ${MAX_LINE_WIDTH})`);
+      }
+    }
+    cueCount += 1;
+  });
+
+  if (cueCount === 0) failures.push("nenhuma legenda encontrada");
+  return { failures, warnings, cueCount };
+}
+
+const files = process.argv.slice(2);
+if (files.length === 0) {
+  console.error("Uso: node scripts/subtitle-check.mjs <arquivo.srt|arquivo.vtt> [outro ...]");
+  process.exit(1);
+}
+
+let failedFiles = 0;
+for (const file of files) {
+  const label = relative(process.cwd(), file) || file;
+  let result;
+  try {
+    result = checkFile(file);
+  } catch (err) {
+    result = { failures: [`não foi possível ler: ${err.message}`], warnings: [] };
+  }
+  if (result.failures.length) {
+    failedFiles += 1;
+    console.error(`FALHOU: ${label}`);
+    for (const f of result.failures) console.error(`  - ${f}`);
+  } else {
+    console.log(`OK: ${label} (${result.cueCount ?? 0} blocos)`);
+  }
+  for (const w of result.warnings) console.log(`  aviso: ${w}`);
+}
+
+if (failedFiles) {
+  console.error(`${failedFiles} de ${files.length} arquivo(s) com falha.`);
+  process.exit(1);
+}
+console.log(`${files.length} arquivo(s) verificado(s) sem falhas.`);

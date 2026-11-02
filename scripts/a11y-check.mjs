@@ -1,0 +1,129 @@
+#!/usr/bin/env node
+/*
+ * cceak · Intelie
+ * Classificação da informação (ISO/IEC 27001): Uso Interno
+ *
+ * Verificação estática de acessibilidade (WCAG 2.2 AA) sobre web/. Somente leitura,
+ * sem rede, sem dependências. Complementa scripts/check-site.mjs (que já cobre
+ * landmarks, h1, alt e ids de ARIA) com: nome acessível de botões, links e campos,
+ * texto de link genérico, ordem de títulos, tabelas, iframes, mídia com autoplay,
+ * tabindex positivo, zoom bloqueado, foco visível e movimento reduzido no CSS.
+ * Não substitui teste com leitor de tela nem auditoria com usuários reais.
+ *
+ * Saída: lista de falhas; código de saída 1 se houver alguma.
+ * Uso: node scripts/a11y-check.mjs
+ */
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join, dirname, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const webRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "web");
+const failures = [];
+const fail = (file, msg) => failures.push(`${relative(webRoot, file) || file}: ${msg}`);
+
+const GENERIC_LINK_TEXT = ["aqui", "clique aqui", "leia mais", "saiba mais", "veja mais", "mais"];
+
+function walk(dir, out = []) {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) walk(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+const text = (html) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+const hasName = (attrs) => /\b(aria-label|aria-labelledby|title)="[^"]+"/i.test(attrs);
+const files = walk(webRoot);
+const htmlFiles = files.filter((f) => f.endsWith(".html"));
+
+for (const file of htmlFiles) {
+  const html = readFileSync(file, "utf8");
+
+  // Idioma e título
+  if (!/<html[^>]*\blang="[a-z]{2}/i.test(html)) fail(file, "<html> sem atributo lang");
+  if (!/<title>[^<]+<\/title>/i.test(html)) fail(file, "título vazio (WCAG 2.4.2)");
+
+  // Ordem dos títulos: sem pular níveis ao descer
+  const levels = [...html.matchAll(/<h([1-6])\b/gi)].map((m) => Number(m[1]));
+  for (let i = 1; i < levels.length; i++) {
+    if (levels[i] > levels[i - 1] + 1) {
+      fail(file, `título h${levels[i]} após h${levels[i - 1]} (pula nível, WCAG 1.3.1)`);
+      break;
+    }
+  }
+
+  // Botões: nome acessível
+  for (const [, attrs, inner] of html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)) {
+    if (!text(inner) && !hasName(attrs)) fail(file, `botão sem nome acessível: ${inner.slice(0, 60).trim()}`);
+  }
+
+  // Links: nome acessível e texto genérico
+  for (const [, attrs, inner] of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const label = text(inner);
+    if (!label && !hasName(attrs) && !/<img\b[^>]*\balt="[^"]+"/i.test(inner)) {
+      fail(file, "link sem texto (WCAG 2.4.4)");
+    } else if (GENERIC_LINK_TEXT.includes(label.toLowerCase()) && !hasName(attrs)) {
+      fail(file, `link com texto genérico "${label}" (WCAG 2.4.4)`);
+    }
+  }
+
+  // Campos de formulário: rótulo associado
+  const labelFor = new Set([...html.matchAll(/<label\b[^>]*\bfor="([^"]+)"/gi)].map((m) => m[1]));
+  for (const match of html.matchAll(/<(input|select|textarea)\b[^>]*>/gi)) {
+    const tag = match[0];
+    const type = tag.match(/\btype="([^"]+)"/i)?.[1]?.toLowerCase();
+    if (["hidden", "submit", "button", "reset", "image"].includes(type)) continue;
+    const id = tag.match(/\bid="([^"]+)"/i)?.[1];
+    // Rótulo implícito: o campo está dentro de um <label> ainda aberto
+    const before = html.slice(0, match.index);
+    const insideLabel = before.lastIndexOf("<label") > before.lastIndexOf("</label>");
+    if (hasName(tag) || insideLabel || (id && labelFor.has(id))) continue;
+    fail(file, `campo sem rótulo: ${tag.slice(0, 80)}`);
+  }
+
+  // tabindex positivo quebra a ordem natural de foco
+  for (const [tag] of html.matchAll(/<[^>]*\btabindex="([1-9]\d*)"[^>]*>/gi)) {
+    fail(file, `tabindex positivo: ${tag.slice(0, 80)}`);
+  }
+
+  // Iframes com título
+  for (const [tag] of html.matchAll(/<iframe\b[^>]*>/gi)) {
+    if (!/\btitle="[^"]+"/i.test(tag)) fail(file, "iframe sem title (WCAG 4.1.2)");
+  }
+
+  // Mídia não pode iniciar sozinha
+  if (/<(audio|video)\b[^>]*\bautoplay\b/i.test(html)) fail(file, "mídia com autoplay (WCAG 2.2.2)");
+
+  // Tabelas de dados precisam de cabeçalho
+  if (/<table\b/i.test(html) && !/<th\b/i.test(html)) fail(file, "tabela sem <th> (WCAG 1.3.1)");
+}
+
+// Viewport não pode bloquear zoom (WCAG 1.4.4)
+for (const file of htmlFiles) {
+  const html = readFileSync(file, "utf8");
+  const viewport = html.match(/<meta[^>]*name="viewport"[^>]*>/i)?.[0] ?? "";
+  const max = viewport.match(/maximum-scale=([\d.]+)/i)?.[1];
+  if (/user-scalable=(no|0)/i.test(viewport) || (max && Number(max) < 2)) {
+    fail(file, "viewport bloqueia zoom (WCAG 1.4.4)");
+  }
+}
+
+// CSS: foco visível e movimento reduzido
+const cssFiles = files.filter((f) => f.endsWith(".css"));
+for (const file of cssFiles) {
+  const css = readFileSync(file, "utf8");
+  if (/\b(animation|transition)\s*:/i.test(css) && !/prefers-reduced-motion/i.test(css)) {
+    fail(file, "animação/transição sem prefers-reduced-motion (WCAG 2.3.3)");
+  }
+  if (/outline\s*:\s*(none|0)\b/i.test(css) && !/:focus(-visible)?\b/i.test(css)) {
+    fail(file, "outline removido sem estilo de :focus-visible (WCAG 2.4.7)");
+  }
+}
+
+if (failures.length) {
+  console.error(`FALHOU: ${failures.length} problema(s) de acessibilidade`);
+  for (const f of failures) console.error(`  - ${f}`);
+  process.exit(1);
+}
+console.log(`OK: acessibilidade estática verificada em ${htmlFiles.length} páginas e ${cssFiles.length} folhas de estilo.`);

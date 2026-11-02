@@ -9,7 +9,8 @@ memória).
 
 ## Entradas
 
-- TODO: [tópico](topico.md) — gancho de uma linha.
+- [Segurança e marca](seguranca-e-marca.md) — marca intelie obrigatória pela política; segurança como controles verificáveis, não invulnerabilidade.
+- [Lições operacionais](licoes-operacionais.md) — erros recorrentes de Docker Compose, GoTrue, shell e edição, com a prevenção de cada um.
 
 ## Regras
 

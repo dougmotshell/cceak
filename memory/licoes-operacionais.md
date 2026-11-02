@@ -1,0 +1,34 @@
+---
+name: licoes-operacionais
+description: Erros recorrentes e prevenções do cceak (Docker Compose local, Supabase/GoTrue, shell, edição de arquivos, agentes em segundo plano). Leia antes de subir a stack ou de mexer em auth e banco.
+metadata:
+  type: feedback
+---
+
+# Lições operacionais
+
+- **`pkill -f <padrão>` mata o próprio shell** quando o padrão aparece no comando. Prevenção: encerrar por porta (`ss -ltnp | grep :<porta>`) ou guardar o PID ao iniciar o processo.
+  **Why:** saiu com código 144 duas vezes e perdeu o restante do comando.
+
+- **Imagem `supabase/postgres` não tem superusuário `postgres`:** o admin é `supabase_admin`. Healthcheck com `pg_isready -U postgres` nunca fica saudável.
+  **How to apply:** usar `-U supabase_admin` (ver `docker-compose.yml`).
+
+- **Papéis internos sem senha:** `supabase_auth_admin` e `authenticator` não herdam `POSTGRES_PASSWORD`. O GoTrue reinicia com `password authentication failed` até a senha ser definida. Os papéis só existem depois que o servidor sobe, então um script em `docker-entrypoint-initdb.d` falha: definir a senha no serviço `migrate`, que espera os papéis existirem.
+
+- **Migração antes do schema `auth`:** `auth.users` e `auth.uid()` não existem na primeira inicialização. Aplicar migrações que referenciam `auth` só depois que o GoTrue criou `auth.users` (checar a coluna `email_confirmed_at`, não só a tabela).
+
+- **Login local retorna `invalid_credentials` mesmo com senha certa:** causas encontradas, todas necessárias: (1) faltava a identidade em `auth.identities` com `provider='email'`; (2) `aud` do usuário era `''` porque `GOTRUE_JWT_AUD` não estava definido; (3) custo bcrypt (usar 10). Diagnóstico: `GOTRUE_LOG_LEVEL=debug` mostra o `WHERE` real da consulta.
+
+- **Ferramentas com o mesmo nome do alvo:** `Edit` falhou ao tentar trocar um trecho que já tinha sido alterado. Antes de editar em lote, ler o trecho atual.
+
+- **Arquivos mudam no disco entre leituras** (aviso de alteração externa). Tratar o estado do disco como verdade, sem reverter.
+
+- **Agentes em segundo plano:** o especialista só existe como tipo de agente depois que o arquivo `.claude/agents/<nome>.md` é gravado pelo grupo. Antes disso, não improvisar substituto com outro nome; aguardar a notificação.
+
+- **Verificação de tags de imagem:** a API do Docker Hub (`hub.docker.com/v2/repositories/<repo>/tags/<tag>`) confirma se a tag existe (HTTP 200). Usar antes de fixar versão.
+
+- **Fonte de CNPJ:** Jusbrasil bloqueia leitura automatizada (403). A BrasilAPI (`brasilapi.com.br/api/cnpj/v1/<cnpj>`) expõe o cadastro público. Não copiar quadro de sócios (dado pessoal).
+
+- **Custo de CPU:** os scripts de geração (ícones PNG, gerador de segredos) levam menos de 1 s, bem abaixo do limite de 80 % de um núcleo.
+
+Vínculos: [[seguranca-e-marca]] (postura de segurança e política de marca).

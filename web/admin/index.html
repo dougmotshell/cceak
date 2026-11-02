@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- cceak — administração da configuração · Classificação (ISO/IEC 27001): Uso Interno -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Administração · cceak</title>
+  <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/assets/img/casa/logo-allan-kardec.png" type="image/png" sizes="128x128">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <script src="/assets/js/env.js" defer></script>
+  <script src="/assets/js/config-schema.js" defer></script>
+  <script src="/assets/js/admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Voltar ao site público">
+        <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32">
+        <span>Administração<small>cceak</small></span>
+      </a>
+      <div class="header-actions">
+        <span id="admin-session-info" class="session-info"></span>
+        <button class="btn btn--ghost btn--small" id="logout" type="button" hidden>Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <div class="container admin-wrap">
+      <div id="admin-status" class="notice" role="status" aria-live="polite" hidden></div>
+
+      <section id="admin-login" class="admin-card" aria-labelledby="login-titulo" hidden>
+        <h1 id="login-titulo">Entrar na administração</h1>
+        <p class="lead">Use o e-mail e a senha de um administrador cadastrado.</p>
+        <form id="login-form" novalidate>
+          <label class="field">
+            <span class="field-label">E-mail</span>
+            <input id="login-email" name="email" type="email" autocomplete="username" required>
+          </label>
+          <label class="field">
+            <span class="field-label">Senha</span>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button id="login-submit" class="btn btn--primary" type="submit">Entrar</button>
+        </form>
+        <p class="help">Não há cadastro público. Novos administradores são criados pelo responsável técnico.</p>
+      </section>
+
+      <section id="admin-panel" aria-labelledby="painel-titulo" hidden>
+        <h2 id="painel-titulo">Configuração do site</h2>
+        <p class="lead">Altere os textos, as redes e os recursos. Cada seção é salva separadamente e aparece no site em instantes.</p>
+        <p><a href="/">Ver o site</a></p>
+        <div id="admin-sections"></div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
