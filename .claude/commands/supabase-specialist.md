@@ -3,10 +3,4 @@ description: Especialista em Supabase do cceak (projeto hospedado e ambiente loc
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/supabase-specialist.md -->
-
-Delegate the task below to the `supabase-specialist` specialist defined in @.claude/agents/supabase-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `supabase-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/supabase-specialist.md --> Delegate the task below to the `supabase-specialist` specialist defined in @.claude/agents/supabase-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `supabase-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.

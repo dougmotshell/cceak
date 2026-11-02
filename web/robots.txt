@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
-
-# Sitemap: TODO adicionar a URL do sitemap quando o domínio de produção existir.
+Disallow: /admin/ # Sitemap: TODO adicionar a URL do sitemap quando o domínio de produção existir.

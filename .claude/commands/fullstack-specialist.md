@@ -3,10 +3,4 @@ description: Orquestrador de entregas ponta a ponta do cceak (site estático, AP
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/fullstack-specialist.md -->
-
-Delegate the task below to the `fullstack-specialist` specialist defined in @.claude/agents/fullstack-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `fullstack-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/fullstack-specialist.md --> Delegate the task below to the `fullstack-specialist` specialist defined in @.claude/agents/fullstack-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `fullstack-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.

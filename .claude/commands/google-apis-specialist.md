@@ -3,10 +3,4 @@ description: Especialista nas APIs do Google usadas ou candidatas no cceak — G
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/google-apis-specialist.md -->
-
-Delegate the task below to the `google-apis-specialist` specialist defined in @.claude/agents/google-apis-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `google-apis-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/google-apis-specialist.md --> Delegate the task below to the `google-apis-specialist` specialist defined in @.claude/agents/google-apis-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `google-apis-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.

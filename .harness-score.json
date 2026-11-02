@@ -1,5 +1,2 @@
-{
-  "rules": {
-    "HYG-05": "off"
-  }
+{ "rules": { "HYG-05": "off" }
 }

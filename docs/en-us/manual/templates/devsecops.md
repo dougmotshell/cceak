@@ -1,13 +1,4 @@
-# Pipeline security triage sheet · cceak
-
-Brand: Intelie · cceak.
-Information classification (ISO/IEC 27001): Internal Use (Uso Interno).
-
-Short English version. The Portuguese source of truth is [`docs/pt-br/manual/templates/devsecops.md`](../../../pt-br/manual/templates/devsecops.md). Never record a secret value, token or key: record only path, line and type. Use `TODO:` for missing information.
-
-## Sections
-
-1. **Identification:** date (UTC), triage owner, source (Semgrep, OSV-Scanner, gitleaks, Dependabot, manual review or `scripts/devsecops-check.mjs`), identifier (rule, CVE, GHSA or DSO-xx), related control (CTRL-xx).
+# Pipeline security triage sheet · cceak (): (). Short English version. The Portuguese source of truth is [`docs/pt-br/manual/templates/devsecops.md`](../../../pt-br/manual/templates/devsecops.md). Never record a secret value, token or key: record only path, line and type. Use `TODO:` for missing information. ## Sections 1. **Identification:** date (UTC), triage owner, source (Semgrep, OSV-Scanner, gitleaks, Dependabot, manual review or `scripts/devsecops-check.mjs`), identifier (rule, CVE, GHSA or DSO-xx), related control (CTRL-xx).
 2. **Finding:** file and line, objective description, affected package, action or image with current version, fixed version or recommended action, whether the vulnerable path is reached, exposure.
 3. **Classification:** severity (critical, high, medium, low, false positive), exploitable in practice, reachable in code, suggested deadline, one-sentence justification.
 4. **Decision:** fix now with its own PR and green gate, schedule, accept risk (owner, expiry, reason), or false positive with justification recorded in the tool configuration.

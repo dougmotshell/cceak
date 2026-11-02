@@ -3,10 +3,4 @@ description: Especialista em UX e UI do cceak (site público, instalação como 
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/ux-ui-specialist.md -->
-
-Delegate the task below to the `ux-ui-specialist` specialist defined in @.claude/agents/ux-ui-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `ux-ui-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/ux-ui-specialist.md --> Delegate the task below to the `ux-ui-specialist` specialist defined in @.claude/agents/ux-ui-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `ux-ui-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.

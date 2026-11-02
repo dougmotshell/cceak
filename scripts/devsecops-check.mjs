@@ -1,108 +1,17 @@
 #!/usr/bin/env node
-/*
- * Intelie · cceak: verificação estática da política de segurança do pipeline (sem rede, sem dependências).
- * Classificação da informação (ISO/IEC 27001): Uso Interno
- *
- * Lê .github/workflows/*.yml e .github/dependabot.yml. Não chama a API do GitHub.
- *  DSO-01  todo workflow declara permissions: no nível superior (mínimo privilégio)
- *  DSO-02  nenhum workflow usa pull_request_target (risco de execução de código não confiável)
- *  DSO-03  uses: de terceiros fixado por versão (@vN, @vN.N.N) ou SHA; sem @main, @master, @latest ou sem ref
- *  DSO-04  imagens de container (image: e docker://) com tag fixa, não "latest"
- *  DSO-05  expressões de entrada não confiável (título/corpo de issue ou PR) não interpoladas em run:
- *  DSO-06  security.yml cobre os controles CTRL-03 (segredos), CTRL-04 (SAST) e CTRL-05 (CVE)
- *  DSO-07  security.yml não tem continue-on-error: true (gate de segurança não pode ser opcional)
- *  DSO-08  dependabot.yml existe e cobre o ecossistema github-actions
- *
- * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário.
- * Uso (a partir da raiz do repositório): node scripts/devsecops-check.mjs
- * Controles: docs/pt-br/architecture/controles-seguranca-soc2.md
- */
+/* * * Lê .github/workflows/*.yml e .github/dependabot.yml. Não chama a API do GitHub. * DSO-01 todo workflow declara permissions: no nível superior (mínimo privilégio) * DSO-02 nenhum workflow usa pull_request_target (risco de execução de código não confiável) * DSO-03 uses: de terceiros fixado por versão (@vN, @vN.N.N) ou SHA; sem @main, @master, @latest ou sem ref * DSO-04 imagens de container (image: e docker://) com tag fixa, não "latest" * DSO-05 expressões de entrada não confiável (título/corpo de issue ou PR) não interpoladas em run: * DSO-06 security.yml cobre os controles CTRL-03 (segredos), CTRL-04 (SAST) e CTRL-05 (CVE) * DSO-07 security.yml não tem continue-on-error: true (gate de segurança não pode ser opcional) * DSO-08 dependabot.yml existe e cobre o ecossistema github-actions * * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário. * Uso (a partir da raiz do repositório): node scripts/devsecops-check.mjs * Controles: docs/pt-br/architecture/controles-seguranca-soc2.md */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
+import { fileURLToPath } from "node:url"; const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
 const wfDir = join(repo, ".github", "workflows");
 const dependabot = join(repo, ".github", "dependabot.yml");
 const failures = [];
-const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`);
-
-const UNTRUSTED = /\$\{\{\s*github\.event\.(issue\.(title|body)|pull_request\.(title|body)|comment\.body|review\.body|head_ref|pull_request\.head\.ref)/;
-const MUTABLE_REF = /@(main|master|latest|dev|develop|HEAD)\b/i;
-
-if (!existsSync(wfDir)) {
-  fail("DSO-01", wfDir, "diretório de workflows ausente");
-} else {
-  const files = readdirSync(wfDir).filter((f) => /\.ya?ml$/.test(f)).sort();
-  if (files.length === 0) fail("DSO-01", wfDir, "nenhum workflow encontrado");
-
-  for (const name of files) {
-    const file = join(wfDir, name);
-    const lines = readFileSync(file, "utf8").split(/\r?\n/);
-    const text = lines.join("\n");
-
-    // DSO-01
-    if (!lines.some((l) => /^permissions:/.test(l))) {
-      fail("DSO-01", file, "sem permissions: no nível superior");
-    }
-    // DSO-02
-    if (/^\s*pull_request_target\s*:/m.test(text) || /on:\s*\[?[^\n]*pull_request_target/.test(text)) {
-      fail("DSO-02", file, "usa pull_request_target");
-    }
-
-    // DSO-03 e DSO-04, linha a linha
-    lines.forEach((line, i) => {
-      const code = line.replace(/#.*$/, "");
-      const uses = code.match(/^\s*-?\s*uses:\s*(\S+)/);
-      if (uses && !uses[1].startsWith("./")) {
-        const target = uses[1];
-        if (target.startsWith("docker://")) {
-          const img = target.slice("docker://".length);
-          if (!img.includes("@sha256:") && (!img.includes(":") || img.endsWith(":latest"))) {
-            fail("DSO-04", file, `linha ${i + 1}: imagem docker:// sem tag fixa (${img})`);
-          }
-        } else if (!target.includes("@") || MUTABLE_REF.test(target)) {
-          fail("DSO-03", file, `linha ${i + 1}: ação sem versão fixa (${target})`);
-        }
-      }
-      const img = code.match(/^\s*image:\s*["']?([^"'\s]+)/);
-      if (img && (!img[1].includes(":") || img[1].endsWith(":latest")) && !img[1].includes("@sha256:")) {
-        fail("DSO-04", file, `linha ${i + 1}: image sem tag fixa (${img[1]})`);
-      }
-    });
-
-    // DSO-05: run: com expressão de entrada não confiável
-    let runIndent = -1;
-    lines.forEach((line, i) => {
-      const indent = line.match(/^ */)[0].length;
-      if (runIndent >= 0 && line.trim() && indent <= runIndent) runIndent = -1;
-      if (/^\s*-?\s*run:/.test(line)) runIndent = indent;
-      if (runIndent >= 0 && UNTRUSTED.test(line)) {
-        fail("DSO-05", file, `linha ${i + 1}: entrada não confiável interpolada em run: (use env:)`);
-      }
-    });
-
-    if (name === "security.yml") {
-      // DSO-06
-      for (const [tool, ctrl] of [["gitleaks", "CTRL-03"], ["semgrep", "CTRL-04"], ["osv-scanner", "CTRL-05"]]) {
-        if (!text.toLowerCase().includes(tool)) fail("DSO-06", file, `${ctrl}: ferramenta "${tool}" não aparece no workflow`);
-      }
-      // DSO-07
-      if (/continue-on-error:\s*true/.test(text)) fail("DSO-07", file, "continue-on-error: true em gate de segurança");
-    }
-  }
-}
-
-// DSO-08
-if (!existsSync(dependabot)) {
-  fail("DSO-08", dependabot, "arquivo ausente");
-} else if (!/github-actions/.test(readFileSync(dependabot, "utf8"))) {
-  fail("DSO-08", dependabot, "não cobre o ecossistema github-actions");
-}
-
-if (failures.length) {
-  for (const f of failures) console.log(`FALHA ${f}`);
-  console.log(`\n${failures.length} falha(s) na política de pipeline.`);
-  process.exit(1);
+const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`); const UNTRUSTED = /\$\{\{\s*github\.event\.(issue\.(title|body)|pull_request\.(title|body)|comment\.body|review\.body|head_ref|pull_request\.head\.ref)/;
+const MUTABLE_REF = /@(main|master|latest|dev|develop|HEAD)\b/i; if (!existsSync(wfDir)) { fail("DSO-01", wfDir, "diretório de workflows ausente");
+} else { const files = readdirSync(wfDir).filter((f) => /\.ya?ml$/.test(f)).sort(); if (files.length === 0) fail("DSO-01", wfDir, "nenhum workflow encontrado"); for (const name of files) { const file = join(wfDir, name); const lines = readFileSync(file, "utf8").split(/\r?\n/); const text = lines.join("\n"); // DSO-01 if (!lines.some((l) => /^permissions:/.test(l))) { fail("DSO-01", file, "sem permissions: no nível superior"); } // DSO-02 if (/^\s*pull_request_target\s*:/m.test(text) || /on:\s*\[?[^\n]*pull_request_target/.test(text)) { fail("DSO-02", file, "usa pull_request_target"); } // DSO-03 e DSO-04, linha a linha lines.forEach((line, i) => { const code = line.replace(/#.*$/, ""); const uses = code.match(/^\s*-?\s*uses:\s*(\S+)/); if (uses && !uses[1].startsWith("./")) { const target = uses[1]; if (target.startsWith("docker://")) { const img = target.slice("docker://".length); if (!img.includes("@sha256:") && (!img.includes(":") || img.endsWith(":latest"))) { fail("DSO-04", file, `linha ${i + 1}: imagem docker:// sem tag fixa (${img})`); } } else if (!target.includes("@") || MUTABLE_REF.test(target)) { fail("DSO-03", file, `linha ${i + 1}: ação sem versão fixa (${target})`); } } const img = code.match(/^\s*image:\s*["']?([^"'\s]+)/); if (img && (!img[1].includes(":") || img[1].endsWith(":latest")) && !img[1].includes("@sha256:")) { fail("DSO-04", file, `linha ${i + 1}: image sem tag fixa (${img[1]})`); } }); // DSO-05: run: com expressão de entrada não confiável let runIndent = -1; lines.forEach((line, i) => { const indent = line.match(/^ */)[0].length; if (runIndent >= 0 && line.trim() && indent <= runIndent) runIndent = -1; if (/^\s*-?\s*run:/.test(line)) runIndent = indent; if (runIndent >= 0 && UNTRUSTED.test(line)) { fail("DSO-05", file, `linha ${i + 1}: entrada não confiável interpolada em run: (use env:)`); } }); if (name === "security.yml") { // DSO-06 for (const [tool, ctrl] of [["gitleaks", "CTRL-03"], ["semgrep", "CTRL-04"], ["osv-scanner", "CTRL-05"]]) { if (!text.toLowerCase().includes(tool)) fail("DSO-06", file, `${ctrl}: ferramenta "${tool}" não aparece no workflow`); } // DSO-07 if (/continue-on-error:\s*true/.test(text)) fail("DSO-07", file, "continue-on-error: true em gate de segurança"); } }
+} // DSO-08
+if (!existsSync(dependabot)) { fail("DSO-08", dependabot, "arquivo ausente");
+} else if (!/github-actions/.test(readFileSync(dependabot, "utf8"))) { fail("DSO-08", dependabot, "não cobre o ecossistema github-actions");
+} if (failures.length) { for (const f of failures) console.log(`FALHA ${f}`); console.log(`\n${failures.length} falha(s) na política de pipeline.`); process.exit(1);
 }
 console.log("OK: política de pipeline sem falhas estáticas.");

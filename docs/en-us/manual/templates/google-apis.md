@@ -1,12 +1,4 @@
-# Google API integration sheet
-
-Information classification (ISO/IEC 27001): Internal Use. Brand: Intelie.
-
-> **Source of truth:** [`docs/pt-br/manual/templates/google-apis.md`](../../../pt-br/manual/templates/google-apis.md). This short version lists the same decisions. Do not paste keys, secrets, non-public client IDs or visitor data.
-
-One sheet per Google service. Record for each:
-
-- [ ] Purpose on the site and whether it is optional (what the visitor loses if blocked).
+# Google API integration sheet > **Source of truth:** [`docs/pt-br/manual/templates/google-apis.md`](../../../pt-br/manual/templates/google-apis.md). This short version lists the same decisions. Do not paste keys, secrets, non-public client IDs or visitor data. One sheet per Google service. Record for each: - [ ] Purpose on the site and whether it is optional (what the visitor loses if blocked).
 - [ ] Whether a Google account is needed, and the minimal OAuth scopes.
 - [ ] Credential type and origin or referrer restrictions.
 - [ ] Free quota, expected usage and the date the official documentation was checked.

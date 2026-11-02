@@ -1,28 +1,8 @@
-# Referência de marca: Casa de Cultura Espírita Allan Kardec
-
-Classificação da informação (ISO/IEC 27001): Uso Interno.
-
-Fonte: materiais enviados pela própria Casa (banner do canal do YouTube e faixa da fachada). Não é um manual de marca oficial; a Casa decide a versão final.
-
-## Elementos visuais
-
-- **Azul-marinho profundo** como cor dominante: amostras `#023167`, `#023670`, `#023c78`.
+# Referência de marca: Casa de Cultura Espírita Allan Kardec Fonte: materiais enviados pela própria Casa (banner do canal do YouTube e faixa da fachada). Não é um manual de marca oficial; a Casa decide a versão final. ## Elementos visuais - **Azul-marinho profundo** como cor dominante: amostras `#023167`, `#023670`, `#023c78`.
 - **Dourado e creme** para o título sobre o azul (faixa da fachada).
 - **Motivo de videira** em traço branco fino, com cachos e folhas (referência a João 15, "eu sou a videira"). Usar só como ornamento, sem alterar o desenho.
-- **Tipografia com serifa** nos títulos da faixa; o site usa a fonte do sistema (sem CDN), então a serifa deve entrar pelo fallback `Georgia, "Times New Roman", serif` nos títulos, se aprovado.
-
-## Textos oficiais vistos nos materiais
-
-- Frase na faixa: "Nascer, morrer, renascer ainda e progredir sempre, tal é a lei." (Allan Kardec, *O Livro dos Espíritos*.)
-- Reuniões públicas: sábados, às 18h. Atividades anunciadas: orações, passe espírita, diálogo fraterno, evangelização infantil, livraria e biblioteca espírita, estudo das obras de Allan Kardec.
-
-## Uso no site
-
-- Fachada (`web/assets/img/casa/fachada.jpg`) e banner do YouTube (`banner-youtube.jpg`) foram recodificados sem metadados (EXIF e GPS removidos) e reduzidos para a web.
+- **Tipografia com serifa** nos títulos da faixa; o site usa a fonte do sistema (sem CDN), então a serifa deve entrar pelo fallback `Georgia, "Times New Roman", serif` nos títulos, se aprovado. ## Textos oficiais vistos nos materiais - Frase na faixa: "Nascer, morrer, renascer ainda e progredir sempre, tal é a lei." (Allan Kardec, *O Livro dos Espíritos*.)
+- Reuniões públicas: sábados, às 18h. Atividades anunciadas: orações, passe espírita, diálogo fraterno, evangelização infantil, livraria e biblioteca espírita, estudo das obras de Allan Kardec. ## Uso no site - Fachada (`web/assets/img/casa/fachada.jpg`) e banner do YouTube (`banner-youtube.jpg`) foram recodificados sem metadados (EXIF e GPS removidos) e reduzidos para a web.
 - Retrato de Allan Kardec (`allan-kardec.png`, 128 × 128) para uso como ícone ou avatar.
-- Texto alternativo obrigatório em cada imagem, descrevendo o que se vê, sem atribuir opiniões.
-
-## Pendências
-
-- A Casa confirma a paleta final e a versão oficial do logotipo.
+- Texto alternativo obrigatório em cada imagem, descrevendo o que se vê, sem atribuir opiniões. ## Pendências - A Casa confirma a paleta final e a versão oficial do logotipo.
 - Confirmar o uso do retrato e da frase de Kardec com a Casa.

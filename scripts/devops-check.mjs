@@ -1,172 +1,21 @@
 #!/usr/bin/env node
-/*
- * Intelie · cceak: verificação estática de infraestrutura local e de deploy (sem rede, sem dependências).
- * Classificação da informação (ISO/IEC 27001): Uso Interno
- *
- * Lê docker-compose.yml e web/vercel.json sem subir containers nem chamar a Vercel.
- *  DOC-01  docker-compose.yml existe e declara services
- *  DOC-02  cada serviço declara image com tag fixa (não ausente, não "latest")
- *  DOC-03  portas publicadas no host ficam em 127.0.0.1
- *  DOC-04  serviço de longa duração (restart diferente de "no") declara healthcheck
- *  DOC-05  sem privileged: true, network_mode: host, pid: host ou ipc: host
- *  DOC-06  segredos (*PASSWORD, *SECRET, *TOKEN, *KEY) só por interpolação ${...}, ou vazios
- *  DOC-07  depends_on aponta para serviço existente
- *  DOC-08  web/vercel.json, se existir, é JSON válido
- *
- * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário.
- * Uso (a partir da raiz do repositório): node scripts/devops-check.mjs
- */
+/* * * Lê docker-compose.yml e web/vercel.json sem subir containers nem chamar a Vercel. * DOC-01 docker-compose.yml existe e declara services * DOC-02 cada serviço declara image com tag fixa (não ausente, não "latest") * DOC-03 portas publicadas no host ficam em 127.0.0.1 * DOC-04 serviço de longa duração (restart diferente de "no") declara healthcheck * DOC-05 sem privileged: true, network_mode: host, pid: host ou ipc: host * DOC-06 segredos (*PASSWORD, *SECRET, *TOKEN, *KEY) só por interpolação ${...}, ou vazios * DOC-07 depends_on aponta para serviço existente * DOC-08 web/vercel.json, se existir, é JSON válido * * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário. * Uso (a partir da raiz do repositório): node scripts/devops-check.mjs */
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
+import { fileURLToPath } from "node:url"; const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
 const composePath = join(repo, "docker-compose.yml");
 const vercelPath = join(repo, "web", "vercel.json");
 const failures = [];
 const notes = [];
-const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`);
-
-const unquote = (s) => (s ?? "").trim().replace(/^["']|["']$/g, "");
-
-/**
- * Lê o subconjunto de YAML usado pelo compose: services no nível 2, chaves de serviço no nível 4,
- * listas e mapas no nível 6. Sem dependências; não cobre âncoras nem blocos multilinha.
- */
-function parseCompose(src) {
-  const services = {};
-  const lines = src.split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith("#"));
-  let inServices = false;
-  let current = null;
-  let section = null;
-
-  for (const raw of lines) {
-    const indent = raw.match(/^ */)[0].length;
-    const t = raw.trim();
-
-    if (indent === 0) {
-      inServices = t === "services:";
-      current = null;
-      section = null;
-      continue;
-    }
-    if (!inServices) continue;
-
-    if (indent === 2 && t.endsWith(":")) {
-      current = t.slice(0, -1);
-      services[current] = { keys: {}, ports: [], env: {}, depends: [], hasHealthcheck: false };
-      section = null;
-      continue;
-    }
-    if (!current) continue;
-    const svc = services[current];
-
-    if (indent === 4) {
-      const m = t.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
-      if (!m) continue;
-      section = m[1];
-      svc.keys[m[1]] = unquote(m[2]);
-      if (m[1] === "healthcheck") svc.hasHealthcheck = true;
-      continue;
-    }
-
-    if (indent === 6 && section === "ports" && t.startsWith("-")) {
-      svc.ports.push(unquote(t.slice(1)));
-    } else if (indent === 6 && section === "depends_on") {
-      const m = t.match(/^([\w-]+):\s*$/);
-      if (m) svc.depends.push(m[1]);
-    } else if (section === "environment" && indent === 6) {
-      const m = t.match(/^([A-Za-z_]\w*):\s*(.*)$/);
-      if (m) svc.env[m[1]] = unquote(m[2]);
-      else if (t.startsWith("-") && t.includes("=")) {
-        const [k, ...v] = t.slice(1).trim().split("=");
-        svc.env[k] = unquote(v.join("="));
-      }
-    }
-  }
-  return services;
-}
-
-// DOC-01: arquivo do compose
-if (!existsSync(composePath)) {
-  fail("DOC-01", composePath, "arquivo ausente");
-} else {
-  const src = readFileSync(composePath, "utf8");
-  const services = parseCompose(src);
-  const names = Object.keys(services);
-
-  if (names.length === 0) fail("DOC-01", composePath, "nenhum serviço encontrado em services:");
-
-  for (const [name, svc] of Object.entries(services)) {
-    const image = svc.keys.image ?? "";
-    // DOC-02: tag fixa
-    const lastSegment = image.split("/").pop() ?? "";
-    const hasDigest = image.includes("@sha256:");
-    const tag = lastSegment.includes(":") ? lastSegment.split(":").pop() : "";
-    if (!image) {
-      fail("DOC-02", composePath, `serviço "${name}" sem image`);
-    } else if (!hasDigest && (!tag || tag === "latest")) {
-      fail("DOC-02", composePath, `serviço "${name}" com imagem sem tag fixa (${image})`);
-    }
-
-    // DOC-03: portas do host só em loopback
-    for (const p of svc.ports) {
-      const publishesHost = /^(\d|\[|\d+\.\d+\.\d+\.\d+)/.test(p) && p.includes(":");
-      if (publishesHost && !p.startsWith("127.0.0.1:")) {
-        fail("DOC-03", composePath, `serviço "${name}" publica porta fora de 127.0.0.1 (${p})`);
-      }
-    }
-
-    // DOC-04: healthcheck em serviço de longa duração
-    const restart = svc.keys.restart ?? "";
-    if (restart !== "no" && !svc.hasHealthcheck) {
-      fail("DOC-04", composePath, `serviço "${name}" sem healthcheck (restart: ${restart || "padrão"})`);
-    }
-
-    // DOC-05: privilégios elevados
-    if (svc.keys.privileged === "true") fail("DOC-05", composePath, `serviço "${name}" com privileged: true`);
-    if (svc.keys.network_mode === "host") fail("DOC-05", composePath, `serviço "${name}" com network_mode: host`);
-    if (svc.keys.pid === "host" || svc.keys.ipc === "host") {
-      fail("DOC-05", composePath, `serviço "${name}" com pid/ipc do host`);
-    }
-
-    // DOC-06: segredos por interpolação
-    for (const [key, value] of Object.entries(svc.env)) {
-      if (/(PASSWORD|SECRET|TOKEN|KEY)$/.test(key) && value !== "" && !value.includes("${")) {
-        fail("DOC-06", composePath, `serviço "${name}": ${key} com valor literal (use \${VAR})`);
-      }
-    }
-    // URLs com senha literal, ex.: postgres://user:senha@host
-    const urlSecret = /:\/\/[^:/\s"]+:([^$@\s"]+)@/g;
-    for (const m of JSON.stringify(svc.env).matchAll(urlSecret)) {
-      fail("DOC-06", composePath, `serviço "${name}": URL com senha literal`);
-      break;
-    }
-
-    // DOC-07: dependências existentes
-    for (const dep of svc.depends) {
-      if (!names.includes(dep)) fail("DOC-07", composePath, `serviço "${name}" depende de "${dep}", que não existe`);
-    }
-  }
-  notes.push(`compose: ${names.length} serviço(s) verificado(s)`);
-}
-
-// DOC-08: configuração da Vercel
-if (existsSync(vercelPath)) {
-  try {
-    JSON.parse(readFileSync(vercelPath, "utf8"));
-    notes.push("vercel.json: JSON válido");
-  } catch (err) {
-    fail("DOC-08", vercelPath, `JSON inválido (${err.message})`);
-  }
-} else {
-  notes.push("vercel.json: ausente (nada a validar)");
-}
-
-for (const n of notes) console.log(`info ${n}`);
-if (failures.length) {
-  for (const f of failures) console.log(`FALHA ${f}`);
-  console.log(`\n${failures.length} falha(s). Corrija a causa e rode de novo.`);
-  process.exit(1);
+const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`); const unquote = (s) => (s ?? "").trim().replace(/^["']|["']$/g, ""); /** * Lê o subconjunto de YAML usado pelo compose: services no nível 2, chaves de serviço no nível 4, * listas e mapas no nível 6. Sem dependências; não cobre âncoras nem blocos multilinha. */
+function parseCompose(src) { const services = {}; const lines = src.split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith("#")); let inServices = false; let current = null; let section = null; for (const raw of lines) { const indent = raw.match(/^ */)[0].length; const t = raw.trim(); if (indent === 0) { inServices = t === "services:"; current = null; section = null; continue; } if (!inServices) continue; if (indent === 2 && t.endsWith(":")) { current = t.slice(0, -1); services[current] = { keys: {}, ports: [], env: {}, depends: [], hasHealthcheck: false }; section = null; continue; } if (!current) continue; const svc = services[current]; if (indent === 4) { const m = t.match(/^([A-Za-z_][\w-]*):\s*(.*)$/); if (!m) continue; section = m[1]; svc.keys[m[1]] = unquote(m[2]); if (m[1] === "healthcheck") svc.hasHealthcheck = true; continue; } if (indent === 6 && section === "ports" && t.startsWith("-")) { svc.ports.push(unquote(t.slice(1))); } else if (indent === 6 && section === "depends_on") { const m = t.match(/^([\w-]+):\s*$/); if (m) svc.depends.push(m[1]); } else if (section === "environment" && indent === 6) { const m = t.match(/^([A-Za-z_]\w*):\s*(.*)$/); if (m) svc.env[m[1]] = unquote(m[2]); else if (t.startsWith("-") && t.includes("=")) { const [k, ...v] = t.slice(1).trim().split("="); svc.env[k] = unquote(v.join("=")); } } } return services;
+} // DOC-01: arquivo do compose
+if (!existsSync(composePath)) { fail("DOC-01", composePath, "arquivo ausente");
+} else { const src = readFileSync(composePath, "utf8"); const services = parseCompose(src); const names = Object.keys(services); if (names.length === 0) fail("DOC-01", composePath, "nenhum serviço encontrado em services:"); for (const [name, svc] of Object.entries(services)) { const image = svc.keys.image ?? ""; // DOC-02: tag fixa const lastSegment = image.split("/").pop() ?? ""; const hasDigest = image.includes("@sha256:"); const tag = lastSegment.includes(":") ? lastSegment.split(":").pop() : ""; if (!image) { fail("DOC-02", composePath, `serviço "${name}" sem image`); } else if (!hasDigest && (!tag || tag === "latest")) { fail("DOC-02", composePath, `serviço "${name}" com imagem sem tag fixa (${image})`); } // DOC-03: portas do host só em loopback for (const p of svc.ports) { const publishesHost = /^(\d|\[|\d+\.\d+\.\d+\.\d+)/.test(p) && p.includes(":"); if (publishesHost && !p.startsWith("127.0.0.1:")) { fail("DOC-03", composePath, `serviço "${name}" publica porta fora de 127.0.0.1 (${p})`); } } // DOC-04: healthcheck em serviço de longa duração const restart = svc.keys.restart ?? ""; if (restart !== "no" && !svc.hasHealthcheck) { fail("DOC-04", composePath, `serviço "${name}" sem healthcheck (restart: ${restart || "padrão"})`); } // DOC-05: privilégios elevados if (svc.keys.privileged === "true") fail("DOC-05", composePath, `serviço "${name}" com privileged: true`); if (svc.keys.network_mode === "host") fail("DOC-05", composePath, `serviço "${name}" com network_mode: host`); if (svc.keys.pid === "host" || svc.keys.ipc === "host") { fail("DOC-05", composePath, `serviço "${name}" com pid/ipc do host`); } // DOC-06: segredos por interpolação for (const [key, value] of Object.entries(svc.env)) { if (/(PASSWORD|SECRET|TOKEN|KEY)$/.test(key) && value !== "" && !value.includes("${")) { fail("DOC-06", composePath, `serviço "${name}": ${key} com valor literal (use \${VAR})`); } } // URLs com senha literal, ex.: postgres://user:senha@host const urlSecret = /:\/\/[^:/\s"]+:([^$@\s"]+)@/g; for (const m of JSON.stringify(svc.env).matchAll(urlSecret)) { fail("DOC-06", composePath, `serviço "${name}": URL com senha literal`); break; } // DOC-07: dependências existentes for (const dep of svc.depends) { if (!names.includes(dep)) fail("DOC-07", composePath, `serviço "${name}" depende de "${dep}", que não existe`); } } notes.push(`compose: ${names.length} serviço(s) verificado(s)`);
+} // DOC-08: configuração da Vercel
+if (existsSync(vercelPath)) { try { JSON.parse(readFileSync(vercelPath, "utf8")); notes.push("vercel.json: JSON válido"); } catch (err) { fail("DOC-08", vercelPath, `JSON inválido (${err.message})`); }
+} else { notes.push("vercel.json: ausente (nada a validar)");
+} for (const n of notes) console.log(`info ${n}`);
+if (failures.length) { for (const f of failures) console.log(`FALHA ${f}`); console.log(`\n${failures.length} falha(s). Corrija a causa e rode de novo.`); process.exit(1);
 }
 console.log("OK: nenhuma falha de infraestrutura estática.");

@@ -1,131 +1,17 @@
 #!/usr/bin/env node
-/*
- * Gera os ícones PNG do PWA (web/assets/img) sem dependências externas.
- * Classificação da informação (ISO/IEC 27001): Uso Interno
- *
- * Uso: node scripts/gen-icons.mjs
- * Uma única thread e um laço simples: custo de CPU desprezível (< 1 s).
- * A marca é um "c" (anel com abertura à direita) sobre fundo da cor da marca,
- * o mesmo desenho do SVG web/assets/img/icon.svg.
- */
+/* * Gera os ícones PNG do PWA (web/assets/img) sem dependências externas. * * Uso: node scripts/gen-icons.mjs * Uma única thread e um laço simples: custo de CPU desprezível (< 1 s). * A marca é um "c" (anel com abertura à direita) sobre fundo da cor da marca, * o mesmo desenho do SVG web/assets/img/icon.svg. */
 import { deflateSync } from "node:zlib";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const here = dirname(fileURLToPath(import.meta.url));
+import { fileURLToPath } from "node:url"; const here = dirname(fileURLToPath(import.meta.url));
 const outDir = join(here, "..", "web", "assets", "img");
-mkdirSync(outDir, { recursive: true });
-
-const BRAND = [29, 78, 216]; // #1d4ed8
-const WHITE = [255, 255, 255];
-
-const CRC_TABLE = (() => {
-  const table = new Uint32Array(256);
-  for (let n = 0; n < 256; n++) {
-    let c = n;
-    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    table[n] = c >>> 0;
-  }
-  return table;
-})();
-
-function crc32(buf) {
-  let c = 0xffffffff;
-  for (const byte of buf) c = CRC_TABLE[(c ^ byte) & 0xff] ^ (c >>> 8);
-  return (c ^ 0xffffffff) >>> 0;
-}
-
-function chunk(type, data) {
-  const typeBuf = Buffer.from(type, "ascii");
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length);
-  const crc = Buffer.alloc(4);
-  crc.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])));
-  return Buffer.concat([len, typeBuf, data, crc]);
-}
-
-function encodePng(size, pixels) {
-  const raw = Buffer.alloc((size * 4 + 1) * size);
-  for (let y = 0; y < size; y++) {
-    raw[y * (size * 4 + 1)] = 0; // filtro "None"
-    pixels.copy(raw, y * (size * 4 + 1) + 1, y * size * 4, (y + 1) * size * 4);
-  }
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
-  ihdr.set([8, 6, 0, 0, 0], 8); // 8 bits, RGBA, sem entrelaçamento
-  return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk("IHDR", ihdr),
-    chunk("IDAT", deflateSync(raw, { level: 9 })),
-    chunk("IEND", Buffer.alloc(0)),
-  ]);
-}
-
-/**
- * Desenha o ícone. `scale` reduz a marca (ícone "maskable" precisa de margem de segurança).
- * `rounded` arredonda o fundo (ícones "any"); o maskable usa quadrado cheio.
- */
-function render(size, { scale = 1, rounded = true } = {}) {
-  const pixels = Buffer.alloc(size * size * 4);
-  const c = size / 2;
-  const radiusOuter = size * 0.31 * scale;
-  const stroke = size * 0.109 * scale;
-  const rInner = radiusOuter - stroke;
-  const rMid = (radiusOuter + rInner) / 2;
-  const half = stroke / 2;
-  const cornerR = rounded ? size * 0.22 : 0;
-  // Abertura de 80° à direita: o "c".
-  const openHalf = (40 * Math.PI) / 180;
-  const capA = { x: c + rMid * Math.cos(openHalf), y: c + rMid * Math.sin(openHalf) };
-  const capB = { x: c + rMid * Math.cos(-openHalf), y: c + rMid * Math.sin(-openHalf) };
-
-  const inRoundedSquare = (x, y) => {
-    if (!rounded) return true;
-    const dx = Math.max(cornerR - x, 0, x - (size - cornerR));
-    const dy = Math.max(cornerR - y, 0, y - (size - cornerR));
-    return dx * dx + dy * dy <= cornerR * cornerR;
-  };
-
-  const inArc = (x, y) => {
-    const dx = x - c;
-    const dy = y - c;
-    const d = Math.hypot(dx, dy);
-    if (Math.abs(d - rMid) <= half) {
-      const angle = Math.atan2(dy, dx);
-      const inOpening = Math.abs(angle) < openHalf;
-      if (!inOpening) return true;
-    }
-    const inCap = (p) => Math.hypot(x - p.x, y - p.y) <= half;
-    return inCap(capA) || inCap(capB);
-  };
-
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4;
-      const px = x + 0.5;
-      const py = y + 0.5;
-      if (!inRoundedSquare(px, py)) {
-        pixels.set([0, 0, 0, 0], i);
-        continue;
-      }
-      const color = inArc(px, py) ? WHITE : BRAND;
-      pixels.set([color[0], color[1], color[2], 255], i);
-    }
-  }
-  return pixels;
-}
-
-const targets = [
-  { file: "icon-192.png", size: 192 },
-  { file: "icon-512.png", size: 512 },
-  { file: "icon-maskable-512.png", size: 512, opts: { scale: 0.8, rounded: false } },
-  { file: "apple-touch-icon.png", size: 180, opts: { rounded: false } },
-];
-
-for (const { file, size, opts } of targets) {
-  const png = encodePng(size, render(size, opts));
-  writeFileSync(join(outDir, file), png);
-  console.log(`ok  ${file}  ${size}x${size}  ${png.length} bytes`);
+mkdirSync(outDir, { recursive: true }); const BRAND = [29, 78, 216]; // #1d4ed8
+const WHITE = [255, 255, 255]; const CRC_TABLE = (() => { const table = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; table[n] = c >>> 0; } return table;
+})(); function crc32(buf) { let c = 0xffffffff; for (const byte of buf) c = CRC_TABLE[(c ^ byte) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0;
+} function chunk(type, data) { const typeBuf = Buffer.from(type, "ascii"); const len = Buffer.alloc(4); len.writeUInt32BE(data.length); const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(Buffer.concat([typeBuf, data]))); return Buffer.concat([len, typeBuf, data, crc]);
+} function encodePng(size, pixels) { const raw = Buffer.alloc((size * 4 + 1) * size); for (let y = 0; y < size; y++) { raw[y * (size * 4 + 1)] = 0; // filtro "None" pixels.copy(raw, y * (size * 4 + 1) + 1, y * size * 4, (y + 1) * size * 4); } const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4); ihdr.set([8, 6, 0, 0, 0], 8); // 8 bits, RGBA, sem entrelaçamento return Buffer.concat([ Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(raw, { level: 9 })), chunk("IEND", Buffer.alloc(0)), ]);
+} /** * Desenha o ícone. `scale` reduz a marca (ícone "maskable" precisa de margem de segurança). * `rounded` arredonda o fundo (ícones "any"); o maskable usa quadrado cheio. */
+function render(size, { scale = 1, rounded = true } = {}) { const pixels = Buffer.alloc(size * size * 4); const c = size / 2; const radiusOuter = size * 0.31 * scale; const stroke = size * 0.109 * scale; const rInner = radiusOuter - stroke; const rMid = (radiusOuter + rInner) / 2; const half = stroke / 2; const cornerR = rounded ? size * 0.22 : 0; // Abertura de 80° à direita: o "c". const openHalf = (40 * Math.PI) / 180; const capA = { x: c + rMid * Math.cos(openHalf), y: c + rMid * Math.sin(openHalf) }; const capB = { x: c + rMid * Math.cos(-openHalf), y: c + rMid * Math.sin(-openHalf) }; const inRoundedSquare = (x, y) => { if (!rounded) return true; const dx = Math.max(cornerR - x, 0, x - (size - cornerR)); const dy = Math.max(cornerR - y, 0, y - (size - cornerR)); return dx * dx + dy * dy <= cornerR * cornerR; }; const inArc = (x, y) => { const dx = x - c; const dy = y - c; const d = Math.hypot(dx, dy); if (Math.abs(d - rMid) <= half) { const angle = Math.atan2(dy, dx); const inOpening = Math.abs(angle) < openHalf; if (!inOpening) return true; } const inCap = (p) => Math.hypot(x - p.x, y - p.y) <= half; return inCap(capA) || inCap(capB); }; for (let y = 0; y < size; y++) { for (let x = 0; x < size; x++) { const i = (y * size + x) * 4; const px = x + 0.5; const py = y + 0.5; if (!inRoundedSquare(px, py)) { pixels.set([0, 0, 0, 0], i); continue; } const color = inArc(px, py) ? WHITE : BRAND; pixels.set([color[0], color[1], color[2], 255], i); } } return pixels;
+} const targets = [ { file: "icon-192.png", size: 192 }, { file: "icon-512.png", size: 512 }, { file: "icon-maskable-512.png", size: 512, opts: { scale: 0.8, rounded: false } }, { file: "apple-touch-icon.png", size: 180, opts: { rounded: false } },
+]; for (const { file, size, opts } of targets) { const png = encodePng(size, render(size, opts)); writeFileSync(join(outDir, file), png); console.log(`ok ${file} ${size}x${size} ${png.length} bytes`);
 }

@@ -1,158 +1,24 @@
 #!/usr/bin/env node
-/*
- * Intelie · cceak: verificação estática das migrações do Supabase/PostgreSQL (sem rede, sem dependências).
- * Classificação da informação (ISO/IEC 27001): Uso Interno
- *
- * Lê supabase/migrations/*.sql, em ordem de nome. Não conecta em banco algum.
- * Heurística por texto: comentários "--" são removidos antes da análise. Não substitui o teste real
- * (aplicar as migrações em banco local, ver docs/pt-br/manual/templates/database.md).
- *  DB-01  nome do arquivo no formato NNNN_slug.sql, com número único
- *  DB-02  create table com if not exists
- *  DB-03  create index com if not exists
- *  DB-04  create extension com if not exists
- *  DB-05  create policy precedido de drop policy if exists com o mesmo nome
- *  DB-06  create trigger precedido de drop trigger if exists (ou create or replace trigger)
- *  DB-07  create function com or replace (idempotente)
- *  DB-08  função security definer com set search_path fixo
- *  DB-09  toda tabela de schema public com enable row level security
- *  DB-10  nenhum disable row level security
- *  DB-11  nenhuma política de escrita (insert/update/delete/all) para anon ou public
- *  DB-12  nenhum grant de escrita para anon ou public
- *  DB-13  drop table, truncate, drop column ou drop schema só com marcador
- *         "-- aprovado-destrutivo: <referência>" no mesmo arquivo (confirmação humana registrada)
- *
- * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário.
- * Uso (a partir da raiz do repositório): node scripts/database-check.mjs
- */
+/* * * Lê supabase/migrations/*.sql, em ordem de nome. Não conecta em banco algum. * Heurística por texto: comentários "--" são removidos antes da análise. Não substitui o teste real * (aplicar as migrações em banco local, ver docs/pt-br/manual/templates/database.md). * DB-01 nome do arquivo no formato NNNN_slug.sql, com número único * DB-02 create table com if not exists * DB-03 create index com if not exists * DB-04 create extension com if not exists * DB-05 create policy precedido de drop policy if exists com o mesmo nome * DB-06 create trigger precedido de drop trigger if exists (ou create or replace trigger) * DB-07 create function com or replace (idempotente) * DB-08 função security definer com set search_path fixo * DB-09 toda tabela de schema public com enable row level security * DB-10 nenhum disable row level security * DB-11 nenhuma política de escrita (insert/update/delete/all) para anon ou public * DB-12 nenhum grant de escrita para anon ou public * DB-13 drop table, truncate, drop column ou drop schema só com marcador * "-- aprovado-destrutivo: <referência>" no mesmo arquivo (confirmação humana registrada) * * Saída: uma linha por falha; código 1 se houver alguma falha, 0 caso contrário. * Uso (a partir da raiz do repositório): node scripts/database-check.mjs */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
+import { fileURLToPath } from "node:url"; const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dir = join(repo, "supabase", "migrations");
 const failures = [];
-const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`);
-
-const stripQuotes = (s) => s.replace(/"/g, "").toLowerCase();
-
-/** Papéis da cláusula "to ..." de uma política ou grant; ignora o que vem depois de using/with check. */
-function rolesOf(st) {
-  const m = st.match(/\bto\s+(.*?)(?=\s+(using|with\s+check)\b|$)/i);
-  if (!m) return [];
-  return m[1].split(",").map((r) => r.trim().replace(/;$/, "").toLowerCase()).filter(Boolean);
-}
-
-if (!existsSync(dir)) {
-  console.log("info supabase/migrations/ ausente: nada a verificar");
-  process.exit(0);
-}
-
-const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
-if (files.length === 0) {
-  console.log("info nenhuma migração encontrada: nada a verificar");
-  process.exit(0);
-}
-
-const tables = new Map(); // nome -> arquivo de origem (apenas schema public)
+const fail = (rule, file, msg) => failures.push(`${rule} ${relative(repo, file)}: ${msg}`); const stripQuotes = (s) => s.replace(/"/g, "").toLowerCase(); /** Papéis da cláusula "to ..." de uma política ou grant; ignora o que vem depois de using/with check. */
+function rolesOf(st) { const m = st.match(/\bto\s+(.*?)(?=\s+(using|with\s+check)\b|$)/i); if (!m) return []; return m[1].split(",").map((r) => r.trim().replace(/;$/, "").toLowerCase()).filter(Boolean);
+} if (!existsSync(dir)) { console.log("info supabase/migrations/ ausente: nada a verificar"); process.exit(0);
+} const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
+if (files.length === 0) { console.log("info nenhuma migração encontrada: nada a verificar"); process.exit(0);
+} const tables = new Map(); // nome -> arquivo de origem (apenas schema public)
 const rlsEnabled = new Set();
 let policyCount = 0;
 let functionCount = 0;
-const seenNumbers = new Map();
-
-for (const name of files) {
-  const file = join(dir, name);
-  const raw = readFileSync(file, "utf8");
-  const sql = raw.replace(/--[^\n]*/g, ""); // remove comentários de linha
-  const norm = sql.replace(/\s+/g, " ");
-
-  // DB-01
-  const m = name.match(/^(\d{4})_[a-z0-9_]+\.sql$/);
-  if (!m) {
-    fail("DB-01", file, "nome deve seguir NNNN_slug.sql (minúsculas, dígitos e _)");
-  } else {
-    if (seenNumbers.has(m[1])) fail("DB-01", file, `número ${m[1]} repetido (também em ${seenNumbers.get(m[1])})`);
-    seenNumbers.set(m[1], name);
-  }
-
-  // DB-02, DB-03, DB-04
-  if (/\bcreate\s+table\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-02", file, "create table sem if not exists");
-  if (/\bcreate\s+(unique\s+)?index\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-03", file, "create index sem if not exists");
-  if (/\bcreate\s+extension\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-04", file, "create extension sem if not exists");
-
-  // DB-05, DB-06: pares drop/create
-  const statements = sql.split(";").map((s) => s.replace(/\s+/g, " ").trim()).filter(Boolean);
-  const droppedPolicies = new Set(
-    [...norm.matchAll(/drop\s+policy\s+if\s+exists\s+("[^"]+"|\S+)\s+on/gi)].map((x) => stripQuotes(x[1])),
-  );
-  const droppedTriggers = new Set(
-    [...norm.matchAll(/drop\s+trigger\s+if\s+exists\s+("[^"]+"|\S+)\s+on/gi)].map((x) => stripQuotes(x[1])),
-  );
-  for (const st of statements) {
-    // DB-05 e DB-11/12 (políticas)
-    const pol = st.match(/^create\s+policy\s+("[^"]+"|\S+)\s+on\s+(?:public\.)?("?\w+"?)/i);
-    if (pol) {
-      policyCount++;
-      const polName = stripQuotes(pol[1]);
-      if (!droppedPolicies.has(polName)) fail("DB-05", file, `create policy "${polName}" sem drop policy if exists prévio`);
-      const cmd = (st.match(/\bfor\s+(select|insert|update|delete|all)\b/i) || [])[1]?.toLowerCase() ?? "all";
-      const toAnonOrPublic = rolesOf(st).some((r) => r === "anon" || r === "public");
-      if (toAnonOrPublic && cmd !== "select") {
-        fail("DB-11", file, `política "${polName}" concede ${cmd} a anon/public`);
-      }
-    }
-    // DB-06 (triggers)
-    const trg = st.match(/^create\s+(or\s+replace\s+)?trigger\s+("[^"]+"|\S+)/i);
-    if (trg && !trg[1]) {
-      const tName = stripQuotes(trg[2]);
-      if (!droppedTriggers.has(tName)) fail("DB-06", file, `create trigger "${tName}" sem drop trigger if exists prévio`);
-    }
-    // DB-12 (grants)
-    if (/^grant\s/i.test(st) && /\b(insert|update|delete|all|truncate)\b/i.test(st) && rolesOf(st).some((r) => r === "anon" || r === "public")) {
-      fail("DB-12", file, `grant de escrita para anon/public: "${st.slice(0, 80)}"`);
-    }
-  }
-
-  // DB-07, DB-08: funções
-  for (const f of norm.matchAll(/create\s+(or\s+replace\s+)?function\s+[\s\S]*?\bas\s+(\$\$|')/gi)) {
-    functionCount++;
-    const header = f[0];
-    const fname = (header.match(/function\s+([\w."]+)/i) || [])[1] ?? "?";
-    if (!f[1]) fail("DB-07", file, `function ${fname} sem or replace`);
-    if (/security\s+definer/i.test(header) && !/set\s+search_path\s*=/i.test(header)) {
-      fail("DB-08", file, `function ${fname} é security definer sem set search_path`);
-    }
-  }
-
-  // DB-09 (coleta), DB-10
-  for (const t of norm.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?(?:("?\w+"?)\.)?("?\w+"?)/gi)) {
-    const schema = stripQuotes(t[1] ?? "public");
-    if (schema === "public") tables.set(stripQuotes(t[2]), name);
-  }
-  for (const r of norm.matchAll(/alter\s+table\s+(?:only\s+)?(?:("?\w+"?)\.)?("?\w+"?)\s+enable\s+row\s+level\s+security/gi)) {
-    if (stripQuotes(r[1] ?? "public") === "public") rlsEnabled.add(stripQuotes(r[2]));
-  }
-  if (/disable\s+row\s+level\s+security/i.test(norm)) fail("DB-10", file, "disable row level security encontrado");
-
-  // DB-13: operações destrutivas
-  const destructive = norm.match(/\b(drop\s+table|truncate|drop\s+column|drop\s+schema)\b/i);
-  if (destructive && !/--\s*aprovado-destrutivo:\s*\S+/.test(raw)) {
-    fail("DB-13", file, `"${destructive[1]}" sem marcador -- aprovado-destrutivo: <referência>`);
-  }
-}
-
-// DB-09: RLS em toda tabela public
-for (const [table, origin] of tables) {
-  if (!rlsEnabled.has(table)) {
-    fail("DB-09", join(dir, origin), `tabela public.${table} sem enable row level security`);
-  }
-}
-
-console.log(
-  `info ${files.length} migração(ões), ${tables.size} tabela(s) public, ${policyCount} política(s), ${functionCount} função(ões)`,
+const seenNumbers = new Map(); for (const name of files) { const file = join(dir, name); const raw = readFileSync(file, "utf8"); const sql = raw.replace(/--[^\n]*/g, ""); // remove comentários de linha const norm = sql.replace(/\s+/g, " "); // DB-01 const m = name.match(/^(\d{4})_[a-z0-9_]+\.sql$/); if (!m) { fail("DB-01", file, "nome deve seguir NNNN_slug.sql (minúsculas, dígitos e _)"); } else { if (seenNumbers.has(m[1])) fail("DB-01", file, `número ${m[1]} repetido (também em ${seenNumbers.get(m[1])})`); seenNumbers.set(m[1], name); } // DB-02, DB-03, DB-04 if (/\bcreate\s+table\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-02", file, "create table sem if not exists"); if (/\bcreate\s+(unique\s+)?index\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-03", file, "create index sem if not exists"); if (/\bcreate\s+extension\s+(?!if\s+not\s+exists\b)/i.test(norm)) fail("DB-04", file, "create extension sem if not exists"); // DB-05, DB-06: pares drop/create const statements = sql.split(";").map((s) => s.replace(/\s+/g, " ").trim()).filter(Boolean); const droppedPolicies = new Set( [...norm.matchAll(/drop\s+policy\s+if\s+exists\s+("[^"]+"|\S+)\s+on/gi)].map((x) => stripQuotes(x[1])), ); const droppedTriggers = new Set( [...norm.matchAll(/drop\s+trigger\s+if\s+exists\s+("[^"]+"|\S+)\s+on/gi)].map((x) => stripQuotes(x[1])), ); for (const st of statements) { // DB-05 e DB-11/12 (políticas) const pol = st.match(/^create\s+policy\s+("[^"]+"|\S+)\s+on\s+(?:public\.)?("?\w+"?)/i); if (pol) { policyCount++; const polName = stripQuotes(pol[1]); if (!droppedPolicies.has(polName)) fail("DB-05", file, `create policy "${polName}" sem drop policy if exists prévio`); const cmd = (st.match(/\bfor\s+(select|insert|update|delete|all)\b/i) || [])[1]?.toLowerCase() ?? "all"; const toAnonOrPublic = rolesOf(st).some((r) => r === "anon" || r === "public"); if (toAnonOrPublic && cmd !== "select") { fail("DB-11", file, `política "${polName}" concede ${cmd} a anon/public`); } } // DB-06 (triggers) const trg = st.match(/^create\s+(or\s+replace\s+)?trigger\s+("[^"]+"|\S+)/i); if (trg && !trg[1]) { const tName = stripQuotes(trg[2]); if (!droppedTriggers.has(tName)) fail("DB-06", file, `create trigger "${tName}" sem drop trigger if exists prévio`); } // DB-12 (grants) if (/^grant\s/i.test(st) && /\b(insert|update|delete|all|truncate)\b/i.test(st) && rolesOf(st).some((r) => r === "anon" || r === "public")) { fail("DB-12", file, `grant de escrita para anon/public: "${st.slice(0, 80)}"`); } } // DB-07, DB-08: funções for (const f of norm.matchAll(/create\s+(or\s+replace\s+)?function\s+[\s\S]*?\bas\s+(\$\$|')/gi)) { functionCount++; const header = f[0]; const fname = (header.match(/function\s+([\w."]+)/i) || [])[1] ?? "?"; if (!f[1]) fail("DB-07", file, `function ${fname} sem or replace`); if (/security\s+definer/i.test(header) && !/set\s+search_path\s*=/i.test(header)) { fail("DB-08", file, `function ${fname} é security definer sem set search_path`); } } // DB-09 (coleta), DB-10 for (const t of norm.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?(?:("?\w+"?)\.)?("?\w+"?)/gi)) { const schema = stripQuotes(t[1] ?? "public"); if (schema === "public") tables.set(stripQuotes(t[2]), name); } for (const r of norm.matchAll(/alter\s+table\s+(?:only\s+)?(?:("?\w+"?)\.)?("?\w+"?)\s+enable\s+row\s+level\s+security/gi)) { if (stripQuotes(r[1] ?? "public") === "public") rlsEnabled.add(stripQuotes(r[2])); } if (/disable\s+row\s+level\s+security/i.test(norm)) fail("DB-10", file, "disable row level security encontrado"); // DB-13: operações destrutivas const destructive = norm.match(/\b(drop\s+table|truncate|drop\s+column|drop\s+schema)\b/i); if (destructive && !/--\s*aprovado-destrutivo:\s*\S+/.test(raw)) { fail("DB-13", file, `"${destructive[1]}" sem marcador -- aprovado-destrutivo: <referência>`); }
+} // DB-09: RLS em toda tabela public
+for (const [table, origin] of tables) { if (!rlsEnabled.has(table)) { fail("DB-09", join(dir, origin), `tabela public.${table} sem enable row level security`); }
+} console.log( `info ${files.length} migração(ões), ${tables.size} tabela(s) public, ${policyCount} política(s), ${functionCount} função(ões)`,
 );
-if (failures.length) {
-  for (const f of failures) console.log(`FALHA ${f}`);
-  console.log(`\n${failures.length} falha(s) nas migrações.`);
-  process.exit(1);
+if (failures.length) { for (const f of failures) console.log(`FALHA ${f}`); console.log(`\n${failures.length} falha(s) nas migrações.`); process.exit(1);
 }
 console.log("OK: migrações sem falhas estáticas.");

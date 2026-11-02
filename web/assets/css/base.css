@@ -1,1298 +1,210 @@
-/*
- * cceak · Intelie
- * Classificação da informação (ISO/IEC 27001): Uso Interno
- *
- * Folha única, sem framework e sem fontes externas. Identidade da Casa de Cultura
- * Espírita Allan Kardec: azul-marinho dominante, creme e dourado como acentos.
- * Especificação: docs/pt-br/architecture/design-system-casa-kardec.md
- *
- * Animações usam apenas transform e opacity e são desligadas por prefers-reduced-motion.
- * Forced-colors mantém bordas e foco visíveis.
- */
-
-/* ---------- Tokens não cromáticos (ficam em html, fora de :root, para não exigir redefinição nos temas) ---------- */
-html {
-  /* Fontes do sistema: sem CDN. Títulos com serifa do sistema (aprovação pendente da Casa). */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
-
-  /* Escala modular, razão 1,2 (terça menor), base 17 px para leitura em celular. */
-  --fs-2xs: 0.7375rem;
-  --fs-xs: 0.885rem;
-  --fs-base: 1.0625rem;
-  --fs-md: 1.275rem;
-  --fs-lg: 1.53rem;
-  --fs-xl: 1.836rem;
-  --fs-2xl: 2.203rem;
-  --fs-3xl: 2.644rem;
-
-  --lh-tight: 1.2;
-  --lh-body: 1.6;
-
-  /* Espaçamento em múltiplos de 4 px. */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-
-  /* Raios */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-pill: 999px;
-
-  /* Alvo de toque mínimo (WCAG 2.5.8 e recomendação de 44 px) */
-  --target: 44px;
-  --header-h: 64px;
-}
-
-/* ---------- Tokens de cor: tema claro (base) ---------- */
-:root {
-  color-scheme: light;
-  --bg: #fbf7ee;             /* creme: fundo da página */
-  --surface: #ffffff;        /* cartões, campos e rodapé elevado */
-  --text: #0f1e36;           /* texto principal */
-  --muted: #4a5566;          /* texto secundário */
-  --primary: #023167;        /* azul-marinho da Casa: botões e links */
-  --primary-text: #ffffff;   /* texto sobre a primária */
-  --primary-focus: #023c78;  /* primária em foco e em passagem do ponteiro */
-  --border: #ddd3bf;         /* bordas decorativas */
-  --border-control: #7d7159; /* contorno de botões, campos e mapa (3:1 mínimo) */
-  --accent: #8a6418;         /* dourado escuro: barra de progresso e filetes */
-  --focus: #9a5b00;          /* anel de foco visível */
-  --success: #1e6b3a;
-  --warning: #7a4a00;        /* alerta */
-  --error: #a32020;
-  --star: #a06c00;           /* estrelas das avaliações (não é texto) */
-  --hero-bg: #023167;        /* faixa de destaque, como na fachada */
-  --hero-text: #fbf7ee;      /* creme sobre azul */
-  --hero-accent: #e6c572;    /* dourado sobre azul */
-  --hero-banner-dark: none;
-  --hero-banner-light: block;
-  --shadow-sm: 0 1px 2px rgb(15 30 54 / 0.08);
-  --shadow: 0 12px 28px rgb(15 30 54 / 0.12);
-  --shadow-top: 0 -10px 30px rgb(15 30 54 / 0.14);
-}
-
-/* ---------- Tokens de cor: tema escuro (preferência do sistema, sem escolha salva) ---------- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #06152a;
-    --surface: #0c2344;
-    --text: #f4efe3;
-    --muted: #c5cdd9;
-    --primary: #e6c572;
-    --primary-text: #06152a;
-    --primary-focus: #f3dc9a;
-    --border: #1f3a60;
-    --border-control: #6f86a8;
-    --accent: #d9b35c;
-    --focus: #f2c75c;
-    --success: #8fd3a6;
-    --warning: #f0c46a;
-    --error: #f4a09a;
-    --star: #e6c572;
-    --hero-bg: #041d3b;
-    --hero-text: #f4efe3;
-    --hero-accent: #e6c572;
-    --hero-banner-dark: block;
-    --hero-banner-light: none;
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow: 0 12px 28px rgb(0 0 0 / 0.45);
-    --shadow-top: 0 -10px 30px rgb(0 0 0 / 0.5);
-  }
-}
-
-/* ---------- Tokens de cor: tema escuro (escolha explícita do visitante) ---------- */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #06152a;
-  --surface: #0c2344;
-  --text: #f4efe3;
-  --muted: #c5cdd9;
-  --primary: #e6c572;
-  --primary-text: #06152a;
-  --primary-focus: #f3dc9a;
-  --border: #1f3a60;
-  --border-control: #6f86a8;
-  --accent: #d9b35c;
-  --focus: #f2c75c;
-  --success: #8fd3a6;
-  --warning: #f0c46a;
-  --error: #f4a09a;
-  --star: #e6c572;
-  --hero-bg: #041d3b;
-  --hero-text: #f4efe3;
-  --hero-accent: #e6c572;
-  --hero-banner-dark: block;
-  --hero-banner-light: none;
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow: 0 12px 28px rgb(0 0 0 / 0.45);
-  --shadow-top: 0 -10px 30px rgb(0 0 0 / 0.5);
-}
-
-/*
- * Cor da marca configurada na administração (--primary inline, em site-config.js) vale só no
- * tema claro, onde o JS já exige 4,5:1 com texto branco. No tema escuro a cor verificada
- * acima prevalece, sem depender de estilo inline. Manter o valor igual ao --primary do tema escuro.
- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) {
-    --primary: #e6c572 !important;
-  }
-}
-
-:root[data-theme=dark] {
-  --primary: #e6c572 !important;
-}
-
-/* ---------- Base ---------- */
+/* * * Folha única, sem framework e sem fontes externas. Identidade da Casa de Cultura * Espírita Allan Kardec: azul-marinho dominante, creme e dourado como acentos. * Especificação: docs/pt-br/architecture/design-system-casa-kardec.md * * Animações usam apenas transform e opacity e são desligadas por prefers-reduced-motion. * Forced-colors mantém bordas e foco visíveis. */ /* ---------- Tokens não cromáticos (ficam em html, fora de :root, para não exigir redefinição nos temas) ---------- */
+html { /* Fontes do sistema: sem CDN. Títulos com serifa do sistema (aprovação pendente da Casa). */ --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; --font-serif: Georgia, "Times New Roman", serif; /* Escala modular, razão 1,2 (terça menor), base 17 px para leitura em celular. */ --fs-2xs: 0.7375rem; --fs-xs: 0.885rem; --fs-base: 1.0625rem; --fs-md: 1.275rem; --fs-lg: 1.53rem; --fs-xl: 1.836rem; --fs-2xl: 2.203rem; --fs-3xl: 2.644rem; --lh-tight: 1.2; --lh-body: 1.6; /* Espaçamento em múltiplos de 4 px. */ --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; /* Raios */ --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-pill: 999px; /* Alvo de toque mínimo (WCAG 2.5.8 e recomendação de 44 px) */ --target: 44px; --header-h: 64px;
+} /* ---------- Tokens de cor: tema claro (base) ---------- */
+:root { color-scheme: light; --bg: #fbf7ee; /* creme: fundo da página */ --surface: #ffffff; /* cartões, campos e rodapé elevado */ --text: #0f1e36; /* texto principal */ --muted: #4a5566; /* texto secundário */ --primary: #023167; /* azul-marinho da Casa: botões e links */ --primary-text: #ffffff; /* texto sobre a primária */ --primary-focus: #023c78; /* primária em foco e em passagem do ponteiro */ --border: #ddd3bf; /* bordas decorativas */ --border-control: #7d7159; /* contorno de botões, campos e mapa (3:1 mínimo) */ --accent: #8a6418; /* dourado escuro: barra de progresso e filetes */ --focus: #9a5b00; /* anel de foco visível */ --success: #1e6b3a; --warning: #7a4a00; /* alerta */ --error: #a32020; --star: #a06c00; /* estrelas das avaliações (não é texto) */ --hero-bg: #023167; /* faixa de destaque, como na fachada */ --hero-text: #fbf7ee; /* creme sobre azul */ --hero-accent: #e6c572; /* dourado sobre azul */ --hero-banner-dark: none; --hero-banner-light: block; --shadow-sm: 0 1px 2px rgb(15 30 54 / 0.08); --shadow: 0 12px 28px rgb(15 30 54 / 0.12); --shadow-top: 0 -10px 30px rgb(15 30 54 / 0.14);
+} /* ---------- Tokens de cor: tema escuro (preferência do sistema, sem escolha salva) ---------- */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg: #06152a; --surface: #0c2344; --text: #f4efe3; --muted: #c5cdd9; --primary: #e6c572; --primary-text: #06152a; --primary-focus: #f3dc9a; --border: #1f3a60; --border-control: #6f86a8; --accent: #d9b35c; --focus: #f2c75c; --success: #8fd3a6; --warning: #f0c46a; --error: #f4a09a; --star: #e6c572; --hero-bg: #041d3b; --hero-text: #f4efe3; --hero-accent: #e6c572; --hero-banner-dark: block; --hero-banner-light: none; --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4); --shadow: 0 12px 28px rgb(0 0 0 / 0.45); --shadow-top: 0 -10px 30px rgb(0 0 0 / 0.5); }
+} /* ---------- Tokens de cor: tema escuro (escolha explícita do visitante) ---------- */
+:root[data-theme="dark"] { color-scheme: dark; --bg: #06152a; --surface: #0c2344; --text: #f4efe3; --muted: #c5cdd9; --primary: #e6c572; --primary-text: #06152a; --primary-focus: #f3dc9a; --border: #1f3a60; --border-control: #6f86a8; --accent: #d9b35c; --focus: #f2c75c; --success: #8fd3a6; --warning: #f0c46a; --error: #f4a09a; --star: #e6c572; --hero-bg: #041d3b; --hero-text: #f4efe3; --hero-accent: #e6c572; --hero-banner-dark: block; --hero-banner-light: none; --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4); --shadow: 0 12px 28px rgb(0 0 0 / 0.45); --shadow-top: 0 -10px 30px rgb(0 0 0 / 0.5);
+} /* * Cor da marca configurada na administração (--primary inline, em site-config.js) vale só no * tema claro, onde o JS já exige 4,5:1 com texto branco. No tema escuro a cor verificada * acima prevalece, sem depender de estilo inline. Manter o valor igual ao --primary do tema escuro. */
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) { --primary: #e6c572 !important; }
+} :root[data-theme=dark] { --primary: #e6c572 !important;
+} /* ---------- Base ---------- */
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--header-h) + 8px);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/* Âncoras não ficam escondidas atrás do cabeçalho fixo */
-[id] {
-  scroll-margin-top: calc(var(--header-h) + 8px);
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  font-size: var(--fs-base);
-  line-height: var(--lh-body);
-}
-
-img,
-svg {
-  display: block;
-  max-width: 100%;
-}
-
-h1,
+*::after { box-sizing: border-box;
+} html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 8px);
+} @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; }
+} /* Âncoras não ficam escondidas atrás do cabeçalho fixo */
+[id] { scroll-margin-top: calc(var(--header-h) + 8px);
+} body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: var(--fs-base); line-height: var(--lh-body);
+} img,
+svg { display: block; max-width: 100%;
+} h1,
 h2,
-h3 {
-  line-height: var(--lh-tight);
-  margin: 0 0 var(--space-2);
-  text-wrap: balance;
-  color: var(--text);
-}
-
-h1,
-h2 {
-  font-family: var(--font-serif);
-  font-weight: 700;
-}
-
-h1 { font-size: clamp(var(--fs-xl), 1.3rem + 2.6vw, var(--fs-3xl)); letter-spacing: -0.01em; }
+h3 { line-height: var(--lh-tight); margin: 0 0 var(--space-2); text-wrap: balance; color: var(--text);
+} h1,
+h2 { font-family: var(--font-serif); font-weight: 700;
+} h1 { font-size: clamp(var(--fs-xl), 1.3rem + 2.6vw, var(--fs-3xl)); letter-spacing: -0.01em; }
 h2 { font-size: clamp(var(--fs-lg), 1.2rem + 1.2vw, var(--fs-2xl)); }
-h3 { font-size: clamp(var(--fs-md), 1.1rem + 0.4vw, var(--fs-lg)); font-weight: 700; }
-
-p {
-  margin: 0 0 var(--space-4);
-}
-
-a {
-  color: var(--primary);
-  text-underline-offset: 0.2em;
-}
-
-:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
-}
-
-.container {
-  width: 100%;
-  max-width: 1120px;
-  margin-inline: auto;
-  padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
-}
-
-.section {
-  padding-block: clamp(var(--space-12), 8vw, 6.5rem);
-}
-
-.section--alt {
-  background: var(--surface);
-  border-block: 1px solid var(--border);
-}
-
-.lead {
-  font-size: clamp(1.1rem, 1rem + 0.4vw, var(--fs-md));
-  color: var(--muted);
-  max-width: 62ch;
-}
-
-.visually-hidden {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* Link de pular para o conteúdo: fora da tela até receber foco */
-.skip-link {
-  position: absolute;
-  inset-inline-start: var(--space-4);
-  top: -100px;
-  z-index: 100;
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-sm);
-  background: var(--primary);
-  color: var(--primary-text);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.skip-link:focus {
-  top: var(--space-3);
-}
-
-/* ---------- Barra de progresso de leitura ---------- */
-.progress {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  height: 3px;
-  background: var(--accent);
-  transform-origin: 0 50%;
-  transform: scaleX(var(--p, 0));
-  z-index: 60;
-  pointer-events: none;
-}
-
-/* ---------- Cabeçalho ---------- */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.site-header.is-scrolled {
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  min-height: var(--header-h);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-/* Acesso à área administrativa: ícone no último item do cabeçalho, à extrema direita */
-.admin-link {
-  width: var(--target);
-  height: var(--target);
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-link svg {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  max-width: none;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--target);
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.brand img {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-}
-
-/* Nome da Casa pode quebrar em duas linhas no cabeçalho, sem empurrar a navegação */
-.brand > span {
-  max-width: 22ch;
-  line-height: 1.2;
-}
-
-.brand small {
-  display: block;
-  font-size: var(--fs-2xs);
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.nav-list {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-list a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--target);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.nav-list a:hover {
-  background: var(--surface);
-}
-
-/* Seção atual: marcada com aria-current (o JS define). Sublinhado e peso, não só cor. */
+h3 { font-size: clamp(var(--fs-md), 1.1rem + 0.4vw, var(--fs-lg)); font-weight: 700; } p { margin: 0 0 var(--space-4);
+} a { color: var(--primary); text-underline-offset: 0.2em;
+} :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: var(--radius-sm);
+} .container { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
+} .section { padding-block: clamp(var(--space-12), 8vw, 6.5rem);
+} .section--alt { background: var(--surface); border-block: 1px solid var(--border);
+} .lead { font-size: clamp(1.1rem, 1rem + 0.4vw, var(--fs-md)); color: var(--muted); max-width: 62ch;
+} .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+} /* Link de pular para o conteúdo: fora da tela até receber foco */
+.skip-link { position: absolute; inset-inline-start: var(--space-4); top: -100px; z-index: 100; padding: var(--space-3) var(--space-5); border-radius: var(--radius-sm); background: var(--primary); color: var(--primary-text); font-weight: 600; text-decoration: none;
+} .skip-link:focus { top: var(--space-3);
+} /* ---------- Barra de progresso de leitura ---------- */
+.progress { position: fixed; inset-block-start: 0; inset-inline: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); z-index: 60; pointer-events: none;
+} /* ---------- Cabeçalho ---------- */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid transparent; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+} .site-header.is-scrolled { border-color: var(--border); box-shadow: var(--shadow-sm);
+} .header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--header-h);
+} .header-actions { display: flex; align-items: center; gap: var(--space-2);
+} /* Acesso à área administrativa: ícone no último item do cabeçalho, à extrema direita */
+.admin-link { width: var(--target); height: var(--target); padding: 0; display: inline-flex; align-items: center; justify-content: center;
+} .admin-link svg { flex: none; width: 20px; height: 20px; max-width: none;
+} .brand { display: inline-flex; align-items: center; gap: var(--space-3); min-height: var(--target); color: var(--text); text-decoration: none; font-weight: 700;
+} .brand img { width: 32px; height: 32px; border-radius: var(--radius-sm);
+} /* Nome da Casa pode quebrar em duas linhas no cabeçalho, sem empurrar a navegação */
+.brand > span { max-width: 22ch; line-height: 1.2;
+} .brand small { display: block; font-size: var(--fs-2xs); font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
+} .nav-list { display: flex; align-items: center; gap: var(--space-1); list-style: none; margin: 0; padding: 0;
+} .nav-list a { display: inline-flex; align-items: center; min-height: var(--target); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); color: var(--text); text-decoration: none; font-weight: 500;
+} .nav-list a:hover { background: var(--surface);
+} /* Seção atual: marcada com aria-current (o JS define). Sublinhado e peso, não só cor. */
 .nav-list a[aria-current="true"],
-.nav-list a[aria-current="location"] {
-  color: var(--primary);
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
-}
-
-.menu-toggle,
-.theme-toggle {
-  min-height: var(--target);
-  min-width: var(--target);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  cursor: pointer;
-}
-
-.theme-glyph {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-/* Ícone hambúrguer do botão Menu (svg tem max-width global; aqui o tamanho é fixo) */
-.menu-toggle svg {
-  flex: none;
-  width: 24px;
-  height: 24px;
-  max-width: none;
-}
-
-/* Item de administração do menu: só aparece no celular (ver regra de max-width: 800px) */
-.nav-list .nav-admin {
-  display: none;
-}
-
-/* Botão Menu só existe no celular; no desktop a navegação aparece inteira no cabeçalho */
-.menu-toggle {
-  display: none;
-}
-
-/* No desktop a navegação é sempre visível, mesmo com o atributo hidden do JS */
-.nav[hidden] {
-  display: block;
-}
-
-/* Entre 801 e 1040 px, a navegação desce para uma segunda linha do cabeçalho (seis itens não cabem numa linha) */
-@media (min-width: 801px) and (max-width: 1040px) {
-  .header-inner {
-    flex-wrap: wrap;
-    padding-block: var(--space-2);
-  }
-
-  .header-actions {
-    order: 1;
-  }
-
-  .nav {
-    order: 2;
-    flex-basis: 100%;
-  }
-
-  .nav-list {
-    flex-wrap: wrap;
-    row-gap: 0;
-  }
-
-  .nav-list a {
-    padding-inline: var(--space-2);
-  }
-}
-
-/* Desktop largo: links de navegação juntos dos botões, à direita do cabeçalho */
-@media (min-width: 1041px) {
-  .nav {
-    order: 1;
-    margin-left: auto;
-  }
-
-  .header-actions {
-    order: 2;
-  }
-}
-
-/* Celular: menu em painel sobreposto, aberto pelo botão */
-@media (max-width: 800px) {
-  .menu-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--target);
-    padding: 0;
-  }
-
-  /* Botão de administração sai do cabeçalho e vai para dentro do menu */
-  .header-actions .admin-link {
-    display: none;
-  }
-
-  .nav-list .nav-admin {
-    display: flex;
-  }
-
-  .nav {
-    position: absolute;
-    inset-inline: 0;
-    top: 100%;
-    max-height: calc(100vh - var(--header-h));
-    overflow-y: auto;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: var(--space-2) clamp(var(--space-4), 4vw, var(--space-8)) var(--space-4);
-    box-shadow: var(--shadow);
-  }
-
-  /* Com JS, o painel fica fechado até o botão. Sem JS (classe .js ausente), o botão some e a lista aparece no fluxo. */
-  .js .nav[hidden] {
-    display: none;
-  }
-
-  .nav-list {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .nav-list a {
-    min-height: var(--target);
-    display: flex;
-    align-items: center;
-  }
-
-  :root:not(.js) .menu-toggle {
-    display: none;
-  }
-
-  :root:not(.js) .header-inner {
-    flex-wrap: wrap;
-    padding-block: var(--space-2);
-  }
-
-  :root:not(.js) .header-actions {
-    order: 1;
-  }
-
-  :root:not(.js) .nav {
-    order: 2;
-    flex-basis: 100%;
-    position: static;
-    padding: 0 0 var(--space-2);
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    max-height: none;
-  }
-}
-
-/* ---------- Botões ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 48px;
-  padding: var(--space-3) var(--space-5);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  font: inherit;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn--primary {
-  background: var(--primary);
-  color: var(--primary-text);
-}
-
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border-control);
-}
-
-@media (hover: hover) {
-  .btn--primary:hover {
-    background: var(--primary-focus);
-  }
-
-  .btn--ghost:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
-}
-
-/* ---------- Destaque (faixa azul, como na fachada) ---------- */
-.hero {
-  position: relative;
-  padding-block: clamp(var(--space-12), 9vw, 7.5rem);
-  background: var(--hero-bg);
-  color: var(--hero-text);
-  border-bottom: 3px solid var(--hero-accent);
-}
-
-.hero .lead {
-  color: var(--hero-text);
-}
-
-.hero-title {
-  color: var(--hero-text);
-}
-
-.hero-title span {
-  color: var(--hero-accent);
-}
-
-.hero :focus-visible {
-  outline-color: var(--hero-accent);
-}
-
-.hero .btn--primary {
-  background: var(--hero-accent);
-  color: var(--hero-bg);
-}
-
-.hero .btn--primary:hover {
-  background: var(--hero-text);
-  color: var(--hero-bg);
-}
-
-.hero .btn--ghost {
-  color: var(--hero-text);
-  border-color: var(--hero-text);
-}
-
-@media (hover: hover) {
-  .hero .btn--ghost:hover {
-    color: var(--hero-accent);
-    border-color: var(--hero-accent);
-  }
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-top: var(--space-8);
-}
-
-.eyebrow {
-  display: inline-block;
-  margin-bottom: var(--space-4);
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-}
-
-.hero .eyebrow {
-  background: transparent;
-  border-color: var(--hero-accent);
-  color: var(--hero-accent);
-}
-
-/* ---------- Cartões ---------- */
-.grid {
-  display: grid;
-  gap: clamp(var(--space-4), 2.5vw, var(--space-6));
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-}
-
-.card {
-  padding: var(--space-6);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.card-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: var(--space-4);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  color: var(--primary);
-}
-
-.card-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.card p {
-  color: var(--muted);
-  margin: 0;
-}
-
-@media (hover: hover) {
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-    border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
-  }
-}
-
-.card:active {
-  transform: scale(0.99);
-}
-
-/* ---------- Avaliações ---------- */
-.card.review {
-  display: grid;
-  gap: var(--space-3);
-  align-content: start;
-}
-
-.stars {
-  margin: 0;
-  color: var(--star);
-  font-size: var(--fs-md);
-  line-height: 1;
-  letter-spacing: 0.12em;
-}
-
-.review-text {
-  margin: 0;
-  color: var(--text);
-}
-
-.review-meta {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--fs-xs);
-}
-
-/* ---------- Passos ---------- */
-.steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-4);
-  counter-reset: step;
-}
-
-.steps li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-4);
-  align-items: start;
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
-.steps li::before {
-  counter-increment: step;
-  content: counter(step);
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: var(--primary-text);
-  font-weight: 700;
-}
-
-.steps p {
-  margin: 0;
-  color: var(--muted);
-}
-
-/* ---------- Perguntas frequentes (details nativo, sem JS) ---------- */
-.faq details {
-  border-bottom: 1px solid var(--border);
-  padding-block: var(--space-1);
-}
-
-.faq summary {
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  cursor: pointer;
-  font-weight: 600;
-  list-style: none;
-}
-
-.faq summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq summary::after {
-  content: "+";
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--primary);
-  transition: transform 0.25s ease;
-}
-
-.faq details[open] summary::after {
-  transform: rotate(45deg);
-}
-
-.faq details p {
-  color: var(--muted);
-  padding-bottom: var(--space-4);
-}
-
-/* ---------- Instalação (PWA) ---------- */
-.install {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  padding: clamp(var(--space-6), 4vw, var(--space-10));
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-.install p {
-  color: var(--muted);
-  margin: 0;
-  max-width: 56ch;
-}
-
-.install-help {
-  margin-top: var(--space-3);
-  font-size: var(--fs-xs);
-}
-
-/* ---------- Localização e mapa ---------- */
-.location-grid {
-  display: grid;
-  gap: var(--space-8);
-  align-items: start;
-}
-
-.location-grid h3 {
-  margin-top: var(--space-6);
-  font-size: var(--fs-md);
-}
-
-/* Mapa: só aparece depois do clique do visitante (ver site-config.js). */
-.map-box {
-  display: grid;
-  place-items: center;
-  gap: var(--space-3);
-  min-height: 240px;
-  padding: var(--space-6);
-  border: 1px dashed var(--border-control);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  text-align: center;
-}
-
-.map-box .help {
-  margin: 0;
-}
-
-.map-frame {
-  display: block;
-  width: 100%;
-  height: min(60vh, 420px);
-  min-height: 280px;
-  border: 0;
-  border-radius: var(--radius-lg);
-}
-
-.help {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--fs-xs);
-}
-
-@media (min-width: 801px) {
-  .location-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(var(--space-8), 5vw, 4rem);
-  }
-}
-
-/* ---------- Formulários e links de contato ---------- */
-.contact-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.contact-links + .contact-links {
-  margin-top: var(--space-3);
-}
-
-/* ---------- Programação da Casa ---------- */
-.programacao-horario {
-  font-weight: 600;
-  color: var(--text);
-}
-
-/* ---------- Estudos (página pública e administração) ---------- */
-.study-list {
-  display: grid;
-  gap: var(--space-4);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.study {
-  padding: var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-}
-
-/* Seletor composto para vencer a margem de ".prose h2" nas páginas de texto */
-.study .study-title {
-  margin: 0 0 var(--space-2);
-}
-
-.study-meta {
-  margin: 0 0 var(--space-3);
-  color: var(--muted);
-}
-
-/* Barra de progresso: trilha com preenchimento proporcional ao avanço */
-.study-progress {
-  height: 12px;
-  border-radius: var(--radius-pill);
-  background: var(--border);
-  overflow: hidden;
-}
-
-.study-progress-fill {
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: var(--primary);
-}
-
-.study-progress-text {
-  margin: var(--space-2) 0 0;
-  font-weight: 600;
-}
-
-.study-dl {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: var(--space-1) var(--space-3);
-  margin: var(--space-3) 0 0;
-}
-
-.study-dl dt {
-  color: var(--muted);
-}
-
-.study-dl dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-/* ---------- Rodapé ---------- */
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding-block: var(--space-8);
-  color: var(--muted);
-  font-size: var(--fs-xs);
-}
-
-.footer-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-4) var(--space-8);
-}
-
-.footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-5);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-nav a {
-  color: var(--text);
-  min-height: var(--target);
-  display: inline-flex;
-  align-items: center;
-}
-
-.classification {
-  margin-top: var(--space-4);
-  font-size: var(--fs-2xs);
-}
-
-/* ---------- Banner de cookies ---------- */
-.cookie-banner {
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 80;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding: var(--space-4) clamp(var(--space-4), 4vw, var(--space-8)) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  box-shadow: var(--shadow-top);
-}
-
-.cookie-banner[hidden] {
-  display: none;
-}
-
-/* ---------- Voltar ao topo ---------- */
-.to-top {
-  position: fixed;
-  right: var(--space-4);
-  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-  z-index: 70;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border: 2px solid var(--border-control);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-}
-
-.to-top:hover {
-  background: var(--primary);
-  color: var(--primary-text);
-}
-
-.to-top:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
-}
-
-.to-top[hidden] {
-  display: none;
-}
-
-.cookie-inner {
-  max-width: 1120px;
-  margin-inline: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
-.cookie-inner p {
-  margin: 0;
-  max-width: 70ch;
-  color: var(--muted);
-  font-size: var(--fs-xs);
-}
-
-.cookie-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.cookie-actions .btn {
-  min-height: var(--target);
-  padding: var(--space-2) var(--space-4);
-}
-
-/* ---------- Páginas legais ---------- */
-.prose {
-  max-width: 72ch;
-  padding-block: clamp(var(--space-8), 6vw, 4rem);
-}
-
-.prose h2 {
-  font-size: clamp(var(--fs-md), 1.1rem + 0.6vw, var(--fs-lg));
-  margin-top: 1.8em;
-}
-
-.prose ul,
-.prose ol {
-  padding-inline-start: 1.4em;
-}
-
-.notice {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--focus);
-  background: color-mix(in srgb, var(--focus) 12%, var(--surface));
-  color: var(--text);
-  font-size: var(--fs-xs);
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-xs);
-}
-
-th,
-td {
-  text-align: start;
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-
-/* ---------- Animação ao rolar (só com JS; sem JS o conteúdo fica visível) ---------- */
-.js .reveal {
-  opacity: 0;
-  transform: translate3d(0, 18px, 0);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.js .reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* ---------- Preferências de movimento reduzido ---------- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .js .reveal {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* ---------- Alto contraste do sistema (cores de fundo são removidas; bordas e texto mantêm a informação) ---------- */
-@media (forced-colors: active) {
-  .btn,
-  .card,
-  .steps li,
-  .install,
-  .map-box,
-  .menu-toggle,
-  .theme-toggle,
-  .eyebrow {
-    border: 1px solid CanvasText;
-  }
-
-  .progress {
-    background: CanvasText;
-  }
-
-  /* A seção atual continua marcada pelo sublinhado e pelo peso, que sobrevivem ao modo de alto contraste */
-}
-
-@media (max-width: 480px) {
-  .brand small {
-    display: none;
-  }
-
-  .cookie-actions .btn {
-    flex: 1 1 100%;
-  }
-}
-
-/* ---------- Imagens da Casa (retrato no destaque e banner do canal) ---------- */
-.hero-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 20px;
-}
-
-.hero-portrait {
-  width: 128px;
-  height: 128px;
-  max-width: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--primary);
-  background: var(--surface);
-}
-
-/* Convite no destaque: título, citação em duas partes e referência bíblica */
-.hero-convite {
-  flex: 1 1 280px;
-  min-width: 0;
-  max-width: 62ch;
-  color: var(--hero-text);
-}
-
-.hero-convite-titulo {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--hero-accent);
-}
-
-.hero-citacao {
-  margin: 0;
-  padding: var(--space-3) 0 var(--space-3) var(--space-4);
-  border-left: 3px solid var(--hero-accent);
-  font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 0.95rem + 0.4vw, var(--fs-md));
-  line-height: var(--lh-body);
-}
-
-.hero-citacao p {
-  margin: 0 0 var(--space-3);
-}
-
-.hero-citacao p:last-of-type {
-  margin-bottom: 0;
-}
-
-.hero-citacao-fonte {
-  margin-top: var(--space-3);
-  font-family: var(--font-sans);
-  font-size: var(--fs-xs);
-  color: var(--hero-text);
-}
-
-.hero-citacao-fonte cite {
-  font-style: normal;
-  font-weight: 700;
-  color: var(--hero-accent);
-}
-
-.canal-banner {
-  display: block;
-  margin-bottom: 24px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.canal-banner img {
-  width: 100%;
-  height: auto;
-}
-
-.canal-banner:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
-}
-
-
-/* ---------- Faixa de topo com a identidade da Casa (tokens por tema) ---------- */
-.hero-banner {
-  line-height: 0;
-  background: var(--bg);
-}
-
-.hero-banner img {
-  display: var(--hero-banner-dark);
-  width: 100%;
-  height: auto;
-}
-
-.hero-banner .hero-banner-light {
-  display: var(--hero-banner-light);
-}
-
-/* As duas versões têm o mesmo tamanho (1600 x 264): a troca de tema não desloca a página. */
-.hero-banner {
-  aspect-ratio: 1600 / 264;
+.nav-list a[aria-current="location"] { color: var(--primary); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px;
+} .menu-toggle,
+.theme-toggle { min-height: var(--target); min-width: var(--target); padding: var(--space-2) var(--space-3); border: 1px solid var(--border-control); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+} .theme-glyph { font-size: 1.1rem; line-height: 1;
+} /* Ícone hambúrguer do botão Menu (svg tem max-width global; aqui o tamanho é fixo) */
+.menu-toggle svg { flex: none; width: 24px; height: 24px; max-width: none;
+} /* Item de administração do menu: só aparece no celular (ver regra de max-width: 800px) */
+.nav-list .nav-admin { display: none;
+} /* Botão Menu só existe no celular; no desktop a navegação aparece inteira no cabeçalho */
+.menu-toggle { display: none;
+} /* No desktop a navegação é sempre visível, mesmo com o atributo hidden do JS */
+.nav[hidden] { display: block;
+} /* Entre 801 e 1040 px, a navegação desce para uma segunda linha do cabeçalho (seis itens não cabem numa linha) */
+@media (min-width: 801px) and (max-width: 1040px) { .header-inner { flex-wrap: wrap; padding-block: var(--space-2); } .header-actions { order: 1; } .nav { order: 2; flex-basis: 100%; } .nav-list { flex-wrap: wrap; row-gap: 0; } .nav-list a { padding-inline: var(--space-2); }
+} /* Desktop largo: links de navegação juntos dos botões, à direita do cabeçalho */
+@media (min-width: 1041px) { .nav { order: 1; margin-left: auto; } .header-actions { order: 2; }
+} /* Celular: menu em painel sobreposto, aberto pelo botão */
+@media (max-width: 800px) { .menu-toggle { display: inline-flex; align-items: center; justify-content: center; width: var(--target); padding: 0; } /* Botão de administração sai do cabeçalho e vai para dentro do menu */ .header-actions .admin-link { display: none; } .nav-list .nav-admin { display: flex; } .nav { position: absolute; inset-inline: 0; top: 100%; max-height: calc(100vh - var(--header-h)); overflow-y: auto; background: var(--bg); border-bottom: 1px solid var(--border); padding: var(--space-2) clamp(var(--space-4), 4vw, var(--space-8)) var(--space-4); box-shadow: var(--shadow); } /* Com JS, o painel fica fechado até o botão. Sem JS (classe .js ausente), o botão some e a lista aparece no fluxo. */ .js .nav[hidden] { display: none; } .nav-list { flex-direction: column; align-items: stretch; } .nav-list a { min-height: var(--target); display: flex; align-items: center; } :root:not(.js) .menu-toggle { display: none; } :root:not(.js) .header-inner { flex-wrap: wrap; padding-block: var(--space-2); } :root:not(.js) .header-actions { order: 1; } :root:not(.js) .nav { order: 2; flex-basis: 100%; position: static; padding: 0 0 var(--space-2); background: transparent; border: 0; box-shadow: none; max-height: none; }
+} /* ---------- Botões ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 48px; padding: var(--space-3) var(--space-5); border: 2px solid transparent; border-radius: var(--radius-md); font: inherit; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+} .btn:active { transform: scale(0.97);
+} .btn--primary { background: var(--primary); color: var(--primary-text);
+} .btn--ghost { background: transparent; color: var(--text); border-color: var(--border-control);
+} @media (hover: hover) { .btn--primary:hover { background: var(--primary-focus); } .btn--ghost:hover { border-color: var(--primary); color: var(--primary); }
+} /* ---------- Destaque (faixa azul, como na fachada) ---------- */
+.hero { position: relative; padding-block: clamp(var(--space-12), 9vw, 7.5rem); background: var(--hero-bg); color: var(--hero-text); border-bottom: 3px solid var(--hero-accent);
+} .hero .lead { color: var(--hero-text);
+} .hero-title { color: var(--hero-text);
+} .hero-title span { color: var(--hero-accent);
+} .hero :focus-visible { outline-color: var(--hero-accent);
+} .hero .btn--primary { background: var(--hero-accent); color: var(--hero-bg);
+} .hero .btn--primary:hover { background: var(--hero-text); color: var(--hero-bg);
+} .hero .btn--ghost { color: var(--hero-text); border-color: var(--hero-text);
+} @media (hover: hover) { .hero .btn--ghost:hover { color: var(--hero-accent); border-color: var(--hero-accent); }
+} .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8);
+} .eyebrow { display: inline-block; margin-bottom: var(--space-4); padding: var(--space-1) var(--space-3); border: 1px solid var(--border-control); border-radius: var(--radius-pill); background: var(--surface); color: var(--muted); font-size: var(--fs-xs); font-weight: 600;
+} .hero .eyebrow { background: transparent; border-color: var(--hero-accent); color: var(--hero-accent);
+} /* ---------- Cartões ---------- */
+.grid { display: grid; gap: clamp(var(--space-4), 2.5vw, var(--space-6)); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+} .card { padding: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+} .card-icon { display: inline-grid; place-items: center; width: 48px; height: 48px; margin-bottom: var(--space-4); border-radius: var(--radius-md); background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary);
+} .card-icon svg { width: 24px; height: 24px;
+} .card p { color: var(--muted); margin: 0;
+} @media (hover: hover) { .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--primary) 50%, var(--border)); }
+} .card:active { transform: scale(0.99);
+} /* ---------- Avaliações ---------- */
+.card.review { display: grid; gap: var(--space-3); align-content: start;
+} .stars { margin: 0; color: var(--star); font-size: var(--fs-md); line-height: 1; letter-spacing: 0.12em;
+} .review-text { margin: 0; color: var(--text);
+} .review-meta { margin: 0; color: var(--muted); font-size: var(--fs-xs);
+} /* ---------- Passos ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); counter-reset: step;
+} .steps li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: start; padding: var(--space-5); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border);
+} .steps li::before { counter-increment: step; content: counter(step); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--primary-text); font-weight: 700;
+} .steps p { margin: 0; color: var(--muted);
+} /* ---------- Perguntas frequentes (details nativo, sem JS) ---------- */
+.faq details { border-bottom: 1px solid var(--border); padding-block: var(--space-1);
+} .faq summary { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); cursor: pointer; font-weight: 600; list-style: none;
+} .faq summary::-webkit-details-marker { display: none;
+} .faq summary::after { content: "+"; font-size: 1.5rem; line-height: 1; color: var(--primary); transition: transform 0.25s ease;
+} .faq details[open] summary::after { transform: rotate(45deg);
+} .faq details p { color: var(--muted); padding-bottom: var(--space-4);
+} /* ---------- Instalação (PWA) ---------- */
+.install { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-6); padding: clamp(var(--space-6), 4vw, var(--space-10)); border-radius: 20px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+} .install p { color: var(--muted); margin: 0; max-width: 56ch;
+} .install-help { margin-top: var(--space-3); font-size: var(--fs-xs);
+} /* ---------- Localização e mapa ---------- */
+.location-grid { display: grid; gap: var(--space-8); align-items: start;
+} .location-grid h3 { margin-top: var(--space-6); font-size: var(--fs-md);
+} /* Mapa: só aparece depois do clique do visitante (ver site-config.js). */
+.map-box { display: grid; place-items: center; gap: var(--space-3); min-height: 240px; padding: var(--space-6); border: 1px dashed var(--border-control); border-radius: var(--radius-lg); background: var(--surface); text-align: center;
+} .map-box .help { margin: 0;
+} .map-frame { display: block; width: 100%; height: min(60vh, 420px); min-height: 280px; border: 0; border-radius: var(--radius-lg);
+} .help { margin: 0; color: var(--muted); font-size: var(--fs-xs);
+} @media (min-width: 801px) { .location-grid { grid-template-columns: 1fr 1fr; gap: clamp(var(--space-8), 5vw, 4rem); }
+} /* ---------- Formulários e links de contato ---------- */
+.contact-links { display: flex; flex-wrap: wrap; gap: var(--space-3);
+} .contact-links + .contact-links { margin-top: var(--space-3);
+} /* ---------- Programação da Casa ---------- */
+.programacao-horario { font-weight: 600; color: var(--text);
+} /* ---------- Estudos (página pública e administração) ---------- */
+.study-list { display: grid; gap: var(--space-4); list-style: none; margin: 0; padding: 0;
+} .study { padding: var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
+} /* Seletor composto para vencer a margem de ".prose h2" nas páginas de texto */
+.study .study-title { margin: 0 0 var(--space-2);
+} .study-meta { margin: 0 0 var(--space-3); color: var(--muted);
+} /* Barra de progresso: trilha com preenchimento proporcional ao avanço */
+.study-progress { height: 12px; border-radius: var(--radius-pill); background: var(--border); overflow: hidden;
+} .study-progress-fill { height: 100%; width: 0; border-radius: inherit; background: var(--primary);
+} .study-progress-text { margin: var(--space-2) 0 0; font-weight: 600;
+} .study-dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); margin: var(--space-3) 0 0;
+} .study-dl dt { color: var(--muted);
+} .study-dl dd { margin: 0; overflow-wrap: anywhere;
+} /* ---------- Rodapé ---------- */
+.site-footer { border-top: 1px solid var(--border); padding-block: var(--space-8); color: var(--muted); font-size: var(--fs-xs);
+} .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4) var(--space-8);
+} .footer-nav { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); list-style: none; padding: 0; margin: 0;
+} .footer-nav a { color: var(--text); min-height: var(--target); display: inline-flex; align-items: center;
+} .classification { margin-top: var(--space-4); font-size: var(--fs-2xs);
+} /* ---------- Banner de cookies ---------- */
+.cookie-banner { position: fixed; inset-inline: 0; bottom: 0; z-index: 80; max-height: 60vh; overflow-y: auto; padding: var(--space-4) clamp(var(--space-4), 4vw, var(--space-8)) calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); background: var(--surface); border-top: 1px solid var(--border); box-shadow: var(--shadow-top);
+} .cookie-banner[hidden] { display: none;
+} /* ---------- Voltar ao topo ---------- */
+.to-top { position: fixed; right: var(--space-4); bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); z-index: 70; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: 2px solid var(--border-control); border-radius: 50%; background: var(--surface); color: var(--text); box-shadow: var(--shadow); cursor: pointer;
+} .to-top:hover { background: var(--primary); color: var(--primary-text);
+} .to-top:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px;
+} .to-top[hidden] { display: none;
+} .cookie-inner { max-width: 1120px; margin-inline: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4);
+} .cookie-inner p { margin: 0; max-width: 70ch; color: var(--muted); font-size: var(--fs-xs);
+} .cookie-actions { display: flex; flex-wrap: wrap; gap: var(--space-2);
+} .cookie-actions .btn { min-height: var(--target); padding: var(--space-2) var(--space-4);
+} /* ---------- Páginas legais ---------- */
+.prose { max-width: 72ch; padding-block: clamp(var(--space-8), 6vw, 4rem);
+} .prose h2 { font-size: clamp(var(--fs-md), 1.1rem + 0.6vw, var(--fs-lg)); margin-top: 1.8em;
+} .prose ul,
+.prose ol { padding-inline-start: 1.4em;
+} .notice { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--focus); background: color-mix(in srgb, var(--focus) 12%, var(--surface)); color: var(--text); font-size: var(--fs-xs);
+} .table-wrap { overflow-x: auto;
+} table { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+} th,
+td { text-align: start; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border); vertical-align: top;
+} /* ---------- Animação ao rolar (só com JS; sem JS o conteúdo fica visível) ---------- */
+.js .reveal { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 0.7s ease, transform 0.7s ease;
+} .js .reveal.is-visible { opacity: 1; transform: none;
+} /* ---------- Preferências de movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } .js .reveal { opacity: 1; transform: none; }
+} /* ---------- Alto contraste do sistema (cores de fundo são removidas; bordas e texto mantêm a informação) ---------- */
+@media (forced-colors: active) { .btn, .card, .steps li, .install, .map-box, .menu-toggle, .theme-toggle, .eyebrow { border: 1px solid CanvasText; } .progress { background: CanvasText; } /* A seção atual continua marcada pelo sublinhado e pelo peso, que sobrevivem ao modo de alto contraste */
+} @media (max-width: 480px) { .brand small { display: none; } .cookie-actions .btn { flex: 1 1 100%; }
+} /* ---------- Imagens da Casa (retrato no destaque e banner do canal) ---------- */
+.hero-head { display: flex; flex-wrap: wrap; align-items: center; gap: 20px;
+} .hero-portrait { width: 128px; height: 128px; max-width: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); background: var(--surface);
+} /* Convite no destaque: título, citação em duas partes e referência bíblica */
+.hero-convite { flex: 1 1 280px; min-width: 0; max-width: 62ch; color: var(--hero-text);
+} .hero-convite-titulo { margin: 0 0 var(--space-3); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.12em; color: var(--hero-accent);
+} .hero-citacao { margin: 0; padding: var(--space-3) 0 var(--space-3) var(--space-4); border-left: 3px solid var(--hero-accent); font-family: var(--font-serif); font-size: clamp(1.05rem, 0.95rem + 0.4vw, var(--fs-md)); line-height: var(--lh-body);
+} .hero-citacao p { margin: 0 0 var(--space-3);
+} .hero-citacao p:last-of-type { margin-bottom: 0;
+} .hero-citacao-fonte { margin-top: var(--space-3); font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--hero-text);
+} .hero-citacao-fonte cite { font-style: normal; font-weight: 700; color: var(--hero-accent);
+} .canal-banner { display: block; margin-bottom: 24px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
+} .canal-banner img { width: 100%; height: auto;
+} .canal-banner:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px;
+} /* ---------- Faixa de topo com a identidade da Casa (tokens por tema) ---------- */
+.hero-banner { line-height: 0; background: var(--bg);
+} .hero-banner img { display: var(--hero-banner-dark); width: 100%; height: auto;
+} .hero-banner .hero-banner-light { display: var(--hero-banner-light);
+} /* As duas versões têm o mesmo tamanho (1600 x 264): a troca de tema não desloca a página. */
+.hero-banner { aspect-ratio: 1600 / 264;
 }

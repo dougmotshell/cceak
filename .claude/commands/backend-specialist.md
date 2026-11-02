@@ -3,10 +3,4 @@ description: Especialista em backend do cceak: API, funções RPC, regras de neg
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/backend-specialist.md -->
-
-Delegate the task below to the `backend-specialist` specialist defined in @.claude/agents/backend-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `backend-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/backend-specialist.md --> Delegate the task below to the `backend-specialist` specialist defined in @.claude/agents/backend-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `backend-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.

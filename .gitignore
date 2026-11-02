@@ -8,9 +8,7 @@
 *.pem
 *.key
 *.p12
-.secrets/
-
-# Local tooling
+.secrets/ # Local tooling
 .venv/
 venv/
 node_modules/
@@ -22,14 +20,10 @@ __pycache__/
 dist/
 build/
 coverage/
-*.log
-
-# Editors and OS
+*.log # Editors and OS
 .DS_Store
 Thumbs.db
 .idea/
-*.swp
-
-# Ambiente local Docker (segredos gerados)
+*.swp # Ambiente local Docker (segredos gerados)
 .env.local
 docker/local/env.js

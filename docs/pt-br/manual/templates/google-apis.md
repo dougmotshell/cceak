@@ -1,54 +1,22 @@
-# Ficha de integração com APIs do Google
-
-Classificação da informação (ISO/IEC 27001): Uso Interno. Marca: Intelie.
-
-Uma ficha por serviço. Não cole chaves, segredos, IDs de cliente não públicos, e-mails ou dados de visitantes. Use `TODO:` quando faltar dado.
-
-## Identificação
-
-- **Serviço:** TODO: (Sign-In | Analytics GA4 | Search Console | Business Profile | Maps | Fonts | Sheets | Drive)
+# Ficha de integração com APIs do Google Uma ficha por serviço. Não cole chaves, segredos, IDs de cliente não públicos, e-mails ou dados de visitantes. Use `TODO:` quando faltar dado. ## Identificação - **Serviço:** TODO: (Sign-In | Analytics GA4 | Search Console | Business Profile | Maps | Fonts | Sheets | Drive)
 - **Finalidade no site:** TODO:
 - **Obrigatório ou opcional:** TODO: (se opcional, o que o visitante perde)
 - **Responsável técnico:** TODO:
 - **Responsável pela decisão de dados (DPO):** TODO:
-- **Data (UTC):** AAAA-MM-DDTHH:MM
-
-## Acesso e escopos
-
-- **Exige conta Google?** TODO: (do visitante | do responsável | nenhuma)
+- **Data (UTC):** AAAA-MM-DDTHH:MM ## Acesso e escopos - **Exige conta Google?** TODO: (do visitante | do responsável | nenhuma)
 - **Tipo de credencial:** TODO: (cliente OAuth web | chave de API restrita | conta de serviço no servidor | nenhuma)
 - **Escopos OAuth (mínimo):** TODO: (ex.: `openid email profile`; para Drive, escopo de arquivo específico)
-- **Origens ou referenciadores autorizados:** TODO: (apenas origens do site)
-
-## Cota e limites (conferir na documentação oficial)
-
-- **Cota gratuita aplicável:** TODO: (unidade, valor, período)
+- **Origens ou referenciadores autorizados:** TODO: (apenas origens do site) ## Cota e limites (conferir na documentação oficial) - **Cota gratuita aplicável:** TODO: (unidade, valor, período)
 - **Uso previsto:** TODO: (requisições ou eventos por mês)
 - **Situação:** TODO: (cabe | excede: custo estimado TODO:)
-- **Data da consulta à documentação:** TODO:
-
-## Dados e consentimento
-
-- **Dado pessoal tratado:** TODO: (nenhum | identificador | e-mail | localização | outro)
+- **Data da consulta à documentação:** TODO: ## Dados e consentimento - **Dado pessoal tratado:** TODO: (nenhum | identificador | e-mail | localização | outro)
 - **Base legal (LGPD):** TODO:
 - **Consentimento antes de carregar:** TODO: (sim | não, com justificativa)
 - **Citado em `web/privacidade/` e `web/cookies/`:** TODO: (sim | não)
-- **Transferência internacional de dados:** TODO: (sim | não | avaliação pelo DPO)
-
-## Verificação técnica
-
-- [ ] `node scripts/google-apis-check.mjs` sem falhas. Saída resumida: TODO:
+- **Transferência internacional de dados:** TODO: (sim | não | avaliação pelo DPO) ## Verificação técnica - [ ] `node scripts/google-apis-check.mjs` sem falhas. Saída resumida: TODO:
 - [ ] Domínio do serviço permitido na diretiva CSP correta em `web/vercel.json`.
 - [ ] Nenhum domínio Google na CSP sem uso (ou justificado abaixo).
 - [ ] Nenhuma chave `AIza...`, segredo ou ID de cliente não público no repositório.
-- [ ] Script de terceiro só carrega após o aceite (quando há consentimento).
-
-Justificativa de domínio extra na CSP: TODO:
-
-## Resultado
-
-- [ ] Aprovado
+- [ ] Script de terceiro só carrega após o aceite (quando há consentimento). Justificativa de domínio extra na CSP: TODO: ## Resultado - [ ] Aprovado
 - [ ] Aprovado com ressalvas: TODO:
-- [ ] Bloqueado: TODO:
-
-Pendências no console do Google (responsável e data): TODO:
+- [ ] Bloqueado: TODO: Pendências no console do Google (responsável e data): TODO:

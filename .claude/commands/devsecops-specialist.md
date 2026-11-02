@@ -3,10 +3,4 @@ description: Especialista em DevSecOps do cceak, a segurança dentro do ciclo de
 argument-hint: [task for this specialist]
 ---
 <!-- managed-by:cceak/sync-ai-surfaces — do not edit by hand -->
-<!-- source: .claude/agents/devsecops-specialist.md -->
-
-Delegate the task below to the `devsecops-specialist` specialist defined in @.claude/agents/devsecops-specialist.md.
-
-$ARGUMENTS
-
-Use the Agent tool with subagent_type `devsecops-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
+<!-- source: .claude/agents/devsecops-specialist.md --> Delegate the task below to the `devsecops-specialist` specialist defined in @.claude/agents/devsecops-specialist.md. $ARGUMENTS Use the Agent tool with subagent_type `devsecops-specialist` when subagents are available; otherwise adopt that agent's instructions yourself and execute them directly.
