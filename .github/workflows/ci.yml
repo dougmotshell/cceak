@@ -17,8 +17,8 @@ jobs:
     name: ai surfaces in sync
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: make sync-check
@@ -31,7 +31,7 @@ jobs:
     # forgotten.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # TODO: add the setup step for your stack (setup-node, setup-python, setup-go).
       - name: test
         run: make test
@@ -44,8 +44,8 @@ jobs:
     name: harness score
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
       # Report mode. To gate, set HARNESS_MIN_LEVEL as a repository variable:
@@ -57,7 +57,7 @@ jobs:
         run: |
           npx -y harness-score --md harness-report.md \
             ${MIN_LEVEL:+--min-level "$MIN_LEVEL"}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: harness-report
