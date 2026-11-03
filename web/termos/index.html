@@ -1,7 +1,152 @@
 <!doctype html>
 <html lang="pt-BR">
-<head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"> <title>Termos de uso · cceak</title> <meta name="description" content="Regras de uso do site e do aplicativo da Casa de Cultura Espírita Allan Kardec, incluindo direitos e deveres de quem navega."> <meta property="og:type" content="website"> <meta property="og:locale" content="pt_BR"> <meta property="og:title" content="Termos de uso · cceak"> <meta property="og:description" content="Regras de uso do site e do aplicativo da Casa de Cultura Espírita Allan Kardec, incluindo direitos e deveres de quem navega."> <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)"> <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)"> <link rel="manifest" href="/manifest.webmanifest"> <link rel="icon" href="/assets/img/casa/logo-allan-kardec.png" type="image/png" sizes="128x128"> <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png"> <link rel="stylesheet" href="/assets/css/base.css"> <script src="/assets/js/env.js" defer></script> <script src="/assets/js/config-schema.js" defer></script> <script src="/assets/js/site-config.js" defer></script> <script src="/assets/js/app.js" defer></script>
-</head>
-<body> <a class="skip-link" href="#conteudo">Pular para o conteúdo</a> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/" aria-label="cceak, voltar à página inicial"> <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32"> </a> <div class="header-actions"> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar tema claro e escuro">◐</button> </div> </div> </header> <main id="conteudo" tabindex="-1"> <div class="container prose"> <p><a href="/">← Voltar ao início</a></p> <h1>Termos de uso</h1> <p><em>Última atualização: 2026-11-02.</em></p> <p class="notice" role="note"><strong>Aviso:</strong> texto-base em revisão. Antes da publicação, o jurídico deve validar o conteúdo e preencher os trechos marcados com TODO.</p> <h2>1. Aceitação</h2> <p>Ao acessar ou usar o site e o aplicativo cceak, você concorda com estes termos e com a <a href="/privacidade">política de privacidade</a> e a <a href="/cookies">política de cookies</a>. Se não concordar, não use o serviço.</p> <h2>2. O serviço</h2> <p>O cceak é um aplicativo web instalável (PWA), oferecido gratuitamente nesta fase. Podemos alterar, suspender ou descontinuar funções, com aviso razoável quando a mudança afetar o uso.</p> <h2>3. Uso adequado</h2> <p>Você se compromete a usar o serviço de forma legal e a não:</p> <ul> <li>tentar acessar áreas, sistemas ou dados sem autorização;</li> <li>introduzir código malicioso, sobrecarregar a infraestrutura ou contornar medidas de segurança;</li> <li>copiar, modificar ou redistribuir o conteúdo para fins que violem direitos de terceiros.</li> </ul> <h2>4. Propriedade intelectual</h2> <h2>5. Links de terceiros</h2> <p>O site pode conter links para sites externos. Não controlamos esses conteúdos nem respondemos por eles.</p> <h2>6. Disponibilidade e garantias</h2> <p>Empenhamo-nos para manter o serviço disponível e seguro, mas ele é oferecido “no estado em que se encontra”, sem garantia de funcionamento ininterrupto. Essa limitação não afasta direitos que a legislação de defesa do consumidor assegure.</p> <h2>7. Limitação de responsabilidade</h2> <h2>8. Instalação como aplicativo</h2> <p>A instalação na tela inicial é opcional. A remoção do ícone não encerra a sua conta, pois esta fase não possui contas. Dados guardados no navegador podem ser apagados ao limpar os dados do site.</p> <h2>9. Alterações</h2> <p>Podemos atualizar estes termos. A versão vigente é a publicada nesta página, com a data de atualização indicada no topo.</p> <h2>10. Lei aplicável e foro</h2> <p>Estes termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de <span data-cfg="legal.forum">a informar</span> para dirimir controvérsias, sem prejuízo do direito do consumidor de escolher o foro do seu domicílio.</p> </div> </main> <footer class="site-footer"> <div class="container"> <nav aria-label="Rodapé"> <ul class="footer-nav"> <li><a href="/privacidade">Privacidade</a></li> <li><a href="/termos">Termos de uso</a></li> <li><a href="/cookies">Cookies</a></li> <li><button class="btn btn--ghost" id="cookie-manage" type="button">Gerenciar cookies</button></li> </ul> </nav> </div> </footer> <section class="cookie-banner" id="cookie-banner" aria-labelledby="cookie-titulo" hidden> <div class="cookie-inner"> <p id="cookie-titulo">Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não usamos cookies de rastreamento. O mapa de localização é do Google e pode gravar cookies próprios ao ser carregado. <a href="/cookies">Saiba mais sobre cookies</a>.</p> <div class="cookie-actions"> <button class="btn btn--ghost" type="button" data-consent="reject">Recusar opcionais</button> <button class="btn btn--primary" type="button" data-consent="accept">Aceitar todos</button> </div> </div> </section>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Termos de uso · cceak</title>
+    <meta
+      name="description"
+      content="Regras de uso do site e do aplicativo da Casa de Cultura Espírita Allan Kardec, incluindo direitos e deveres de quem navega."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="Termos de uso · cceak" />
+    <meta
+      property="og:description"
+      content="Regras de uso do site e do aplicativo da Casa de Cultura Espírita Allan Kardec, incluindo direitos e deveres de quem navega."
+    />
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="/assets/img/casa/logo-allan-kardec.png"
+      type="image/png"
+      sizes="128x128"
+    />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/css/base.css" />
+    <script src="/assets/js/env.js" defer></script>
+    <script src="/assets/js/config-schema.js" defer></script>
+    <script src="/assets/js/site-config.js" defer></script>
+    <script src="/assets/js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="cceak, voltar à página inicial">
+          <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32" />
+        </a>
+        <div class="header-actions">
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            type="button"
+            aria-label="Alternar tema claro e escuro"
+          >
+            ◐
+          </button>
+        </div>
+      </div>
+    </header>
+    <main id="conteudo" tabindex="-1">
+      <div class="container prose">
+        <p><a href="/">← Voltar ao início</a></p>
+        <h1>Termos de uso</h1>
+        <p><em>Última atualização: 2026-11-02.</em></p>
+        <p class="notice" role="note">
+          <strong>Aviso:</strong> texto-base em revisão. Antes da publicação, o jurídico deve
+          validar o conteúdo e preencher os trechos marcados com TODO.
+        </p>
+        <h2>1. Aceitação</h2>
+        <p>
+          Ao acessar ou usar o site e o aplicativo cceak, você concorda com estes termos e com a
+          <a href="/privacidade">política de privacidade</a> e a
+          <a href="/cookies">política de cookies</a>. Se não concordar, não use o serviço.
+        </p>
+        <h2>2. O serviço</h2>
+        <p>
+          O cceak é um aplicativo web instalável (PWA), oferecido gratuitamente nesta fase. Podemos
+          alterar, suspender ou descontinuar funções, com aviso razoável quando a mudança afetar o
+          uso.
+        </p>
+        <h2>3. Uso adequado</h2>
+        <p>Você se compromete a usar o serviço de forma legal e a não:</p>
+        <ul>
+          <li>tentar acessar áreas, sistemas ou dados sem autorização;</li>
+          <li>
+            introduzir código malicioso, sobrecarregar a infraestrutura ou contornar medidas de
+            segurança;
+          </li>
+          <li>
+            copiar, modificar ou redistribuir o conteúdo para fins que violem direitos de terceiros.
+          </li>
+        </ul>
+        <h2>4. Propriedade intelectual</h2>
+        <h2>5. Links de terceiros</h2>
+        <p>
+          O site pode conter links para sites externos. Não controlamos esses conteúdos nem
+          respondemos por eles.
+        </p>
+        <h2>6. Disponibilidade e garantias</h2>
+        <p>
+          Empenhamo-nos para manter o serviço disponível e seguro, mas ele é oferecido “no estado em
+          que se encontra”, sem garantia de funcionamento ininterrupto. Essa limitação não afasta
+          direitos que a legislação de defesa do consumidor assegure.
+        </p>
+        <h2>7. Limitação de responsabilidade</h2>
+        <h2>8. Instalação como aplicativo</h2>
+        <p>
+          A instalação na tela inicial é opcional. A remoção do ícone não encerra a sua conta, pois
+          esta fase não possui contas. Dados guardados no navegador podem ser apagados ao limpar os
+          dados do site.
+        </p>
+        <h2>9. Alterações</h2>
+        <p>
+          Podemos atualizar estes termos. A versão vigente é a publicada nesta página, com a data de
+          atualização indicada no topo.
+        </p>
+        <h2>10. Lei aplicável e foro</h2>
+        <p>
+          Estes termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro
+          da comarca de <span data-cfg="legal.forum">a informar</span> para dirimir controvérsias,
+          sem prejuízo do direito do consumidor de escolher o foro do seu domicílio.
+        </p>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Rodapé">
+          <ul class="footer-nav">
+            <li><a href="/privacidade">Privacidade</a></li>
+            <li><a href="/termos">Termos de uso</a></li>
+            <li><a href="/cookies">Cookies</a></li>
+            <li>
+              <button class="btn btn--ghost" id="cookie-manage" type="button">
+                Gerenciar cookies
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+    <section class="cookie-banner" id="cookie-banner" aria-labelledby="cookie-titulo" hidden>
+      <div class="cookie-inner">
+        <p id="cookie-titulo">
+          Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não
+          usamos cookies de rastreamento. O mapa de localização é do Google e pode gravar cookies
+          próprios ao ser carregado. <a href="/cookies">Saiba mais sobre cookies</a>.
+        </p>
+        <div class="cookie-actions">
+          <button class="btn btn--ghost" type="button" data-consent="reject">
+            Recusar opcionais
+          </button>
+          <button class="btn btn--primary" type="button" data-consent="accept">
+            Aceitar todos
+          </button>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>

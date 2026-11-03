@@ -2,8 +2,560 @@
 <!-- cceak — landing page Textos marcados com data-cfg são substituídos pela configuração central (Supabase). O conteúdo abaixo é o padrão exibido antes do carregamento e sem rede.
 -->
 <html lang="pt-BR">
-<head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"> <title>cceak · Aplicativo rápido, acessível e instalável</title> <meta name="description" content="Aplicativo que funciona no navegador, no celular e no computador, instala como app e foi feito para ser acessível."> <meta name="application-name" content="cceak"> <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)"> <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)"> <meta property="og:type" content="website"> <meta property="og:locale" content="pt_BR"> <meta property="og:title" content="cceak · Aplicativo rápido, acessível e instalável"> <meta property="og:description" content="Aplicativo rápido, acessível e instalável em qualquer dispositivo."> <meta property="og:image" content="/assets/img/icon-512.png"> <link rel="manifest" href="/manifest.webmanifest"> <link rel="icon" href="/assets/img/casa/logo-allan-kardec.png" type="image/png" sizes="128x128"> <link rel="icon" href="/assets/img/icon-192.png" sizes="192x192" type="image/png"> <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png"> <link rel="stylesheet" href="/assets/css/base.css"> <script type="application/ld+json"> { "@context": "https://schema.org", "@type": "WebSite", "name": "cceak", "inLanguage": "pt-BR", } </script> <script src="/assets/js/env.js" defer></script> <script src="/assets/js/config-schema.js" defer></script> <script src="/assets/js/site-config.js" defer></script> <script src="/assets/js/app.js" defer></script>
-</head>
-<body> <a class="skip-link" href="#conteudo">Pular para o conteúdo</a> <div class="progress" aria-hidden="true"></div> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/" aria-label="Página inicial"> <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32"> <span><span data-cfg="brand.name">CCEAK</span></span> </a> <div class="header-actions"> <button class="theme-toggle" id="theme-toggle" type="button"><span class="theme-glyph" aria-hidden="true">◐</span><span class="visually-hidden">Alternar tema claro e escuro</span></button> <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Abrir menu"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button> <a class="btn btn--ghost admin-link" href="/admin/" aria-label="Área administrativa" title="Área administrativa"><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></a> </div> <nav class="nav" id="site-nav" aria-label="Principal" hidden> <ul class="nav-list"> <li><a href="/estudos/">Estudos</a></li> <li><a href="#instalar">Instalar</a></li> <li><a href="#contato">Contato</a></li> <li class="nav-admin"><a href="/admin/">Área administrativa</a></li> </ul> </nav> </div> </header> <main id="conteudo" tabindex="-1"> <div class="hero-banner" aria-hidden="true"> <img class="hero-banner-dark" src="/assets/img/casa/banner-escuro.jpg" alt="" width="1600" height="264" loading="lazy" decoding="async"> <img class="hero-banner-light" src="/assets/img/casa/banner-claro.jpg" alt="" width="1600" height="264" loading="lazy" decoding="async"> </div> <section class="hero" aria-labelledby="hero-titulo"> <div class="container"> <p class="eyebrow" data-cfg="hero.eyebrow">Duque de Caxias · RJ</p> <h1 id="hero-titulo" class="hero-title" data-cfg="hero.title">Casa de Cultura Espírita Allan Kardec</h1> <div class="hero-head"> <img class="hero-portrait" src="/assets/img/casa/allan-kardec.png" alt="Retrato de Allan Kardec" width="128" height="128" loading="lazy" decoding="async"> <div class="hero-convite"> <p class="hero-convite-titulo">UM CONVITE A TODOS</p> <blockquote class="hero-citacao"> <p>“Vinde a mim, todos vós que estais aflitos e sobrecarregados, que Eu vos aliviarei.”</p> <p>Tomai sobre vós o meu jugo e aprendei comigo que sou brando e humilde de coração e achareis repouso para vossas almas, pois é suave o meu jugo e leve o meu fardo.</p> <footer class="hero-citacao-fonte"> — <cite>Mateus, 11:28 a 30</cite><br> O Evangelho segundo o Espiritismo, cap. V, item 1 </footer> </blockquote> </div> </div> <div class="hero-actions"> <a class="btn btn--primary" href="#localizacao" data-cfg="hero.cta_primary_text" data-cfg-href="hero.cta_primary_href">Como chegar</a> <a class="btn btn--ghost" href="#contato" data-cfg="hero.cta_secondary_text" data-cfg-href="hero.cta_secondary_href">Fale conosco</a> </div> </div> </section> <section class="section" id="recursos" aria-labelledby="recursos-titulo"> <div class="container"> <h2 id="recursos-titulo" class="reveal">Feito para ser usado de verdade</h2> <p class="lead reveal">Quatro compromissos que valem em qualquer aparelho, inclusive nos mais antigos.</p> <div class="grid" id="features-grid"> <article class="card reveal"> <span class="card-icon" aria-hidden="true"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg> </span> <h3>Rápido em qualquer aparelho</h3> <p>Sem frameworks pesados e sem bibliotecas externas. Animações usam apenas transformações leves.</p> </article> <article class="card reveal"> <span class="card-icon" aria-hidden="true"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.7 11.1A10.9 10.9 0 0 1 22 12.5"/><path d="M5 12.6a10.9 10.9 0 0 1 4.1-2.4"/><path d="M2 8.8a15.9 15.9 0 0 1 4-2.8"/><path d="M8.5 16.4a5.4 5.4 0 0 1 4.3-1.4"/><path d="M12 20h.01"/></svg> </span> <h3>Funciona sem internet</h3> <p>As telas já visitadas continuam disponíveis offline, com uma página de aviso quando não houver conexão.</p> </article> <article class="card reveal"> <span class="card-icon" aria-hidden="true"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2"/><path d="M4 7.5h16"/><path d="M12 7.5v5"/><path d="m8 21 4-8.5 4 8.5"/></svg> </span> <h3>Acessível por padrão</h3> <p>Navegação por teclado, leitores de tela, contraste adequado e respeito às preferências de movimento do sistema.</p> </article> <article class="card reveal"> <span class="card-icon" aria-hidden="true"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> </span> <h3>Privado por design</h3> <p>Sem rastreadores de publicidade. Os cookies são somente os necessários, e você decide sobre os demais.</p> </article> </div> </div> </section> <section class="section section--alt" id="como-funciona" aria-labelledby="como-titulo"> <div class="container"> <h2 id="como-titulo" class="reveal">Como funciona</h2> <ol class="steps"> <li class="reveal"> <div> <h3>Abra no navegador</h3> <p>Não há nada para baixar. Basta acessar o endereço, em qualquer aparelho com navegador moderno.</p> </div> </li> <li class="reveal"> <div> <h3>Instale como aplicativo</h3> <p>Adicione à tela inicial para abrir em tela cheia, como um app, sem passar pela loja.</p> </div> </li> <li class="reveal"> <div> <h3>Use com ou sem conexão</h3> <p>O que você já abriu fica disponível offline. Ao voltar a conexão, as informações são atualizadas.</p> </div> </li> </ol> </div> </section> <section class="section" id="acessibilidade" aria-labelledby="acess-titulo"> <div class="container"> <h2 id="acess-titulo" class="reveal">Acessibilidade em primeiro lugar</h2> <p class="lead reveal">Meta: conformidade com WCAG 2.2 nível AA. Estes são os pontos que já estão no site.</p> <div class="grid"> <article class="card reveal"> <h3>Pessoas com deficiência visual</h3> <p>Estrutura com títulos e marcos, textos alternativos, foco visível, rótulos claros e compatibilidade com leitores de tela.</p> </article> <article class="card reveal"> <h3>Pessoas com deficiência auditiva</h3> <p>Nenhuma informação depende só de som. Quando houver vídeos, eles terão legendas e transcrição.</p> </article> <article class="card reveal"> <h3>Mobilidade e motricidade</h3> <p>Tudo funciona só com teclado ou toque. Alvos de toque têm pelo menos 44 pixels e o menu é operável sem precisão.</p> </article> <article class="card reveal"> <h3>Sensibilidade ao movimento</h3> <p>Animações são desligadas automaticamente quando o sistema pede movimento reduzido.</p> </article> </div> <p class="reveal"> Encontrou uma barreira? <a href="#contato">Conte para a gente</a>. Responderemos o quanto antes. </p> </div> </section> <section class="section section--alt" id="instalar" aria-labelledby="instalar-titulo"> <div class="container"> <div class="install reveal"> <div> <h2 id="instalar-titulo">Instale como aplicativo</h2> <p>Abra em tela cheia, sem barra de endereço, e receba o ícone na tela inicial. Não ocupa espaço de loja nem pede permissões.</p> <p class="install-help"> <strong>No iPhone ou iPad:</strong> toque em Compartilhar e depois em “Adicionar à Tela de Início”.<br> <strong>No Android ou computador:</strong> use o botão ao lado, ou o ícone de instalação na barra de endereço. </p> </div> <button class="btn btn--primary" id="install-btn" type="button" hidden>Instalar agora</button> </div> </div> </section> <section class="section" id="perguntas" aria-labelledby="faq-titulo"> <div class="container"> <h2 id="faq-titulo" class="reveal">Perguntas frequentes</h2> <div class="faq reveal" id="faq-list"> <details> <summary>Preciso pagar para usar?</summary> <p>Não. O produto é gratuito nesta fase.</p> </details> <details> <summary>Meus dados são compartilhados com terceiros?</summary> <p>Não vendemos nem cedemos dados para publicidade. Veja a <a href="/privacidade">política de privacidade</a> para os detalhes e os seus direitos.</p> </details> </div> </div> </section> <section class="section section--alt" id="avaliacoes" aria-labelledby="avaliacoes-titulo"> <div class="container"> <h2 id="avaliacoes-titulo" class="reveal">O que dizem sobre a Casa</h2> <div id="reviews-wrap" hidden> <div class="grid" id="reviews-list"></div> <p class="reveal"> <a id="reviews-link" class="btn btn--ghost" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver avaliações no Google (abre em nova aba)</a> </p> </div> </div> </section> <section class="section" id="programacao" aria-labelledby="programacao-titulo" hidden> <div class="container"> <h2 id="programacao-titulo" class="reveal">Programação da Casa</h2> <ul class="grid" id="programacao-list" role="list"></ul> </div> </section> <section class="section section--alt" id="localizacao" aria-labelledby="localizacao-titulo"> <div class="container location-grid"> <div class="reveal"> <h2 id="localizacao-titulo">Como chegar</h2> <h3>Endereço</h3> <p data-cfg="local.address_line">Av. A, lote 32, quadra 34, área 04 - Nova Campinas</p> <p data-cfg="local.city">Duque de Caxias - RJ</p> <p id="cep-wrap" hidden>CEP <span data-cfg="local.cep"></span></p> <p>Telefone: <a id="phone-link" href="tel:+552197738894">(21) 97738-8945</a></p> <p><a id="whatsapp-link" href="https://wa.me/5521977388945" target="_blank" rel="noopener noreferrer" hidden>Falar no WhatsApp (abre em nova aba)</a></p> <p><a id="business-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver ficha no Google Maps (abre em nova aba)</a></p> </div> <div class="reveal map-box" id="map-box"> <div class="map-placeholder" id="map-placeholder"> <button class="btn btn--primary" id="map-load" type="button">Carregar mapa</button> <p class="help">O mapa é fornecido pelo Google. Ao carregá-lo, seu navegador se conecta aos servidores do Google. Ele é carregado quando você clica no botão ou quando esta seção chega à tela. <a href="/privacidade#mapa">Saiba mais</a>.</p> <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Cultura+Esp%C3%ADrita+Allan+Kardec" target="_blank" rel="noopener noreferrer">Abrir no Google Maps (abre em nova aba)</a></p> </div> </div> </div> </section> <section class="section" id="redes" aria-labelledby="redes-titulo"> <div class="container"> <h2 id="redes-titulo" class="reveal">Siga a Casa</h2> <a class="canal-banner reveal" href="https://www.youtube.com/@allankardeccceak9167" target="_blank" rel="noopener noreferrer"> <img src="/assets/img/casa/banner-youtube.jpg" alt="Banner do canal Casa de Cultura Espírita Allan Kardec no YouTube" width="1280" height="211" loading="lazy" decoding="async"> <span class="visually-hidden">Abre o canal no YouTube em nova aba</span> </a> <div class="contact-links reveal" id="social-wrap" hidden> <ul class="footer-nav" id="social-list"></ul> </div> </div> </section> <section class="section section--alt" id="contato" aria-labelledby="contato-titulo"> <div class="container"> <h2 id="contato-titulo" class="reveal">Fale com a gente</h2> <p class="lead reveal">Dúvidas, sugestões ou barreiras de acessibilidade. Não pedimos dados pessoais por aqui.</p> <div class="contact-links reveal"> <a class="btn btn--primary" href="#contato" data-cfg-href="contact.email">allankardecceak@gmail.com</a> <a class="btn btn--ghost" id="whatsapp-contact" href="https://wa.me/5521977388945" target="_blank" rel="noopener noreferrer" hidden>WhatsApp (abre em nova aba)</a> </div> </div> </section> </main> <footer class="site-footer"> <div class="container"> <div class="footer-grid"> <nav aria-label="Rodapé"> <ul class="footer-nav"> <li><a href="/privacidade">Privacidade</a></li> <li><a href="/termos">Termos de uso</a></li> <li><a href="/cookies">Cookies</a></li> <li><button class="btn btn--ghost" id="cookie-manage" type="button">Gerenciar cookies</button></li> </ul> </nav> <p>© <span data-cfg="brand.company">Casa de Cultura Espírita Allan Kardec</span>. Todos os direitos reservados. <span data-cfg="brand.credit">Site desenvolvido por CCEAK</span>.</p> </div></div> </footer> <section class="cookie-banner" id="cookie-banner" aria-labelledby="cookie-titulo" hidden> <div class="cookie-inner"> <p id="cookie-titulo">Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não usamos cookies de rastreamento. O mapa de localização é do Google e pode gravar cookies próprios ao ser carregado. <a href="/cookies">Saiba mais sobre cookies</a>.</p> <div class="cookie-actions"> <button class="btn btn--ghost" type="button" data-consent="reject">Recusar opcionais</button> <button class="btn btn--primary" type="button" data-consent="accept">Aceitar todos</button> </div> </div> </section> <button class="to-top" id="to-top" type="button" aria-label="Voltar ao topo da página" hidden> <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24"><path d="M12 5l-7 7h4v7h6v-7h4z" fill="currentColor"/></svg> <span class="visually-hidden">Voltar ao topo</span> </button>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>cceak · Aplicativo rápido, acessível e instalável</title>
+    <meta
+      name="description"
+      content="Aplicativo que funciona no navegador, no celular e no computador, instala como app e foi feito para ser acessível."
+    />
+    <meta name="application-name" content="cceak" />
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="cceak · Aplicativo rápido, acessível e instalável" />
+    <meta
+      property="og:description"
+      content="Aplicativo rápido, acessível e instalável em qualquer dispositivo."
+    />
+    <meta property="og:image" content="/assets/img/icon-512.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="/assets/img/casa/logo-allan-kardec.png"
+      type="image/png"
+      sizes="128x128"
+    />
+    <link rel="icon" href="/assets/img/icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/css/base.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "cceak",
+        "inLanguage": "pt-BR"
+      }
+    </script>
+    <script src="/assets/js/env.js" defer></script>
+    <script src="/assets/js/config-schema.js" defer></script>
+    <script src="/assets/js/site-config.js" defer></script>
+    <script src="/assets/js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="progress" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="Página inicial">
+          <img src="/assets/img/casa/logo-allan-kardec.png" alt="" width="32" height="32" />
+          <span><span data-cfg="brand.name">CCEAK</span></span>
+        </a>
+        <div class="header-actions">
+          <button class="theme-toggle" id="theme-toggle" type="button">
+            <span class="theme-glyph" aria-hidden="true">◐</span
+            ><span class="visually-hidden">Alternar tema claro e escuro</span>
+          </button>
+          <button
+            class="menu-toggle"
+            id="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Abrir menu"
+          >
+            <svg
+              aria-hidden="true"
+              focusable="false"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+          <a
+            class="btn btn--ghost admin-link"
+            href="/admin/"
+            aria-label="Área administrativa"
+            title="Área administrativa"
+            ><svg
+              aria-hidden="true"
+              focusable="false"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg
+          ></a>
+        </div>
+        <nav class="nav" id="site-nav" aria-label="Principal" hidden>
+          <ul class="nav-list">
+            <li><a href="/estudos/">Estudos</a></li>
+            <li><a href="#instalar">Instalar</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li class="nav-admin"><a href="/admin/">Área administrativa</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="conteudo" tabindex="-1">
+      <div class="hero-banner" aria-hidden="true">
+        <img
+          class="hero-banner-dark"
+          src="/assets/img/casa/banner-escuro.jpg"
+          alt=""
+          width="1600"
+          height="264"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          class="hero-banner-light"
+          src="/assets/img/casa/banner-claro.jpg"
+          alt=""
+          width="1600"
+          height="264"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <section class="hero" aria-labelledby="hero-titulo">
+        <div class="container">
+          <p class="eyebrow" data-cfg="hero.eyebrow">Duque de Caxias · RJ</p>
+          <h1 id="hero-titulo" class="hero-title" data-cfg="hero.title">
+            Casa de Cultura Espírita Allan Kardec
+          </h1>
+          <div class="hero-head">
+            <img
+              class="hero-portrait"
+              src="/assets/img/casa/allan-kardec.png"
+              alt="Retrato de Allan Kardec"
+              width="128"
+              height="128"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="hero-convite">
+              <p class="hero-convite-titulo">UM CONVITE A TODOS</p>
+              <blockquote class="hero-citacao">
+                <p>
+                  “Vinde a mim, todos vós que estais aflitos e sobrecarregados, que Eu vos
+                  aliviarei.”
+                </p>
+                <p>
+                  Tomai sobre vós o meu jugo e aprendei comigo que sou brando e humilde de coração e
+                  achareis repouso para vossas almas, pois é suave o meu jugo e leve o meu fardo.
+                </p>
+                <footer class="hero-citacao-fonte">
+                  — <cite>Mateus, 11:28 a 30</cite><br />
+                  O Evangelho segundo o Espiritismo, cap. V, item 1
+                </footer>
+              </blockquote>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <a
+              class="btn btn--primary"
+              href="#localizacao"
+              data-cfg="hero.cta_primary_text"
+              data-cfg-href="hero.cta_primary_href"
+              >Como chegar</a
+            >
+            <a
+              class="btn btn--ghost"
+              href="#contato"
+              data-cfg="hero.cta_secondary_text"
+              data-cfg-href="hero.cta_secondary_href"
+              >Fale conosco</a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="section" id="recursos" aria-labelledby="recursos-titulo">
+        <div class="container">
+          <h2 id="recursos-titulo" class="reveal">Feito para ser usado de verdade</h2>
+          <p class="lead reveal">
+            Quatro compromissos que valem em qualquer aparelho, inclusive nos mais antigos.
+          </p>
+          <div class="grid" id="features-grid">
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M13 2 3 14h9l-1 8 10-12h-9z" />
+                </svg>
+              </span>
+              <h3>Rápido em qualquer aparelho</h3>
+              <p>
+                Sem frameworks pesados e sem bibliotecas externas. Animações usam apenas
+                transformações leves.
+              </p>
+            </article>
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M1 1l22 22" />
+                  <path d="M16.7 11.1A10.9 10.9 0 0 1 22 12.5" />
+                  <path d="M5 12.6a10.9 10.9 0 0 1 4.1-2.4" />
+                  <path d="M2 8.8a15.9 15.9 0 0 1 4-2.8" />
+                  <path d="M8.5 16.4a5.4 5.4 0 0 1 4.3-1.4" />
+                  <path d="M12 20h.01" />
+                </svg>
+              </span>
+              <h3>Funciona sem internet</h3>
+              <p>
+                As telas já visitadas continuam disponíveis offline, com uma página de aviso quando
+                não houver conexão.
+              </p>
+            </article>
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="4.5" r="2" />
+                  <path d="M4 7.5h16" />
+                  <path d="M12 7.5v5" />
+                  <path d="m8 21 4-8.5 4 8.5" />
+                </svg>
+              </span>
+              <h3>Acessível por padrão</h3>
+              <p>
+                Navegação por teclado, leitores de tela, contraste adequado e respeito às
+                preferências de movimento do sistema.
+              </p>
+            </article>
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="4" y="11" width="16" height="10" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+              </span>
+              <h3>Privado por design</h3>
+              <p>
+                Sem rastreadores de publicidade. Os cookies são somente os necessários, e você
+                decide sobre os demais.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="section section--alt" id="como-funciona" aria-labelledby="como-titulo">
+        <div class="container">
+          <h2 id="como-titulo" class="reveal">Como funciona</h2>
+          <ol class="steps">
+            <li class="reveal">
+              <div>
+                <h3>Abra no navegador</h3>
+                <p>
+                  Não há nada para baixar. Basta acessar o endereço, em qualquer aparelho com
+                  navegador moderno.
+                </p>
+              </div>
+            </li>
+            <li class="reveal">
+              <div>
+                <h3>Instale como aplicativo</h3>
+                <p>
+                  Adicione à tela inicial para abrir em tela cheia, como um app, sem passar pela
+                  loja.
+                </p>
+              </div>
+            </li>
+            <li class="reveal">
+              <div>
+                <h3>Use com ou sem conexão</h3>
+                <p>
+                  O que você já abriu fica disponível offline. Ao voltar a conexão, as informações
+                  são atualizadas.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+      <section class="section" id="acessibilidade" aria-labelledby="acess-titulo">
+        <div class="container">
+          <h2 id="acess-titulo" class="reveal">Acessibilidade em primeiro lugar</h2>
+          <p class="lead reveal">
+            Meta: conformidade com WCAG 2.2 nível AA. Estes são os pontos que já estão no site.
+          </p>
+          <div class="grid">
+            <article class="card reveal">
+              <h3>Pessoas com deficiência visual</h3>
+              <p>
+                Estrutura com títulos e marcos, textos alternativos, foco visível, rótulos claros e
+                compatibilidade com leitores de tela.
+              </p>
+            </article>
+            <article class="card reveal">
+              <h3>Pessoas com deficiência auditiva</h3>
+              <p>
+                Nenhuma informação depende só de som. Quando houver vídeos, eles terão legendas e
+                transcrição.
+              </p>
+            </article>
+            <article class="card reveal">
+              <h3>Mobilidade e motricidade</h3>
+              <p>
+                Tudo funciona só com teclado ou toque. Alvos de toque têm pelo menos 44 pixels e o
+                menu é operável sem precisão.
+              </p>
+            </article>
+            <article class="card reveal">
+              <h3>Sensibilidade ao movimento</h3>
+              <p>
+                Animações são desligadas automaticamente quando o sistema pede movimento reduzido.
+              </p>
+            </article>
+          </div>
+          <p class="reveal">
+            Encontrou uma barreira? <a href="#contato">Conte para a gente</a>. Responderemos o
+            quanto antes.
+          </p>
+        </div>
+      </section>
+      <section class="section section--alt" id="instalar" aria-labelledby="instalar-titulo">
+        <div class="container">
+          <div class="install reveal">
+            <div>
+              <h2 id="instalar-titulo">Instale como aplicativo</h2>
+              <p>
+                Abra em tela cheia, sem barra de endereço, e receba o ícone na tela inicial. Não
+                ocupa espaço de loja nem pede permissões.
+              </p>
+              <p class="install-help">
+                <strong>No iPhone ou iPad:</strong> toque em Compartilhar e depois em “Adicionar à
+                Tela de Início”.<br />
+                <strong>No Android ou computador:</strong> use o botão ao lado, ou o ícone de
+                instalação na barra de endereço.
+              </p>
+            </div>
+            <button class="btn btn--primary" id="install-btn" type="button" hidden>
+              Instalar agora
+            </button>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="perguntas" aria-labelledby="faq-titulo">
+        <div class="container">
+          <h2 id="faq-titulo" class="reveal">Perguntas frequentes</h2>
+          <div class="faq reveal" id="faq-list">
+            <details>
+              <summary>Preciso pagar para usar?</summary>
+              <p>Não. O produto é gratuito nesta fase.</p>
+            </details>
+            <details>
+              <summary>Meus dados são compartilhados com terceiros?</summary>
+              <p>
+                Não vendemos nem cedemos dados para publicidade. Veja a
+                <a href="/privacidade">política de privacidade</a> para os detalhes e os seus
+                direitos.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+      <section class="section section--alt" id="avaliacoes" aria-labelledby="avaliacoes-titulo">
+        <div class="container">
+          <h2 id="avaliacoes-titulo" class="reveal">O que dizem sobre a Casa</h2>
+          <div id="reviews-wrap" hidden>
+            <div class="grid" id="reviews-list"></div>
+            <p class="reveal">
+              <a
+                id="reviews-link"
+                class="btn btn--ghost"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                hidden
+                >Ver avaliações no Google (abre em nova aba)</a
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="programacao" aria-labelledby="programacao-titulo" hidden>
+        <div class="container">
+          <h2 id="programacao-titulo" class="reveal">Programação da Casa</h2>
+          <ul class="grid" id="programacao-list" role="list"></ul>
+        </div>
+      </section>
+      <section class="section section--alt" id="localizacao" aria-labelledby="localizacao-titulo">
+        <div class="container location-grid">
+          <div class="reveal">
+            <h2 id="localizacao-titulo">Como chegar</h2>
+            <h3>Endereço</h3>
+            <p data-cfg="local.address_line">Av. A, lote 32, quadra 34, área 04 - Nova Campinas</p>
+            <p data-cfg="local.city">Duque de Caxias - RJ</p>
+            <p id="cep-wrap" hidden>CEP <span data-cfg="local.cep"></span></p>
+            <p>Telefone: <a id="phone-link" href="tel:+552197738894">(21) 97738-8945</a></p>
+            <p>
+              <a
+                id="whatsapp-link"
+                href="https://wa.me/5521977388945"
+                target="_blank"
+                rel="noopener noreferrer"
+                hidden
+                >Falar no WhatsApp (abre em nova aba)</a
+              >
+            </p>
+            <p>
+              <a id="business-link" href="#" target="_blank" rel="noopener noreferrer" hidden
+                >Ver ficha no Google Maps (abre em nova aba)</a
+              >
+            </p>
+          </div>
+          <div class="reveal map-box" id="map-box">
+            <div class="map-placeholder" id="map-placeholder">
+              <button class="btn btn--primary" id="map-load" type="button">Carregar mapa</button>
+              <p class="help">
+                O mapa é fornecido pelo Google. Ao carregá-lo, seu navegador se conecta aos
+                servidores do Google. Ele é carregado quando você clica no botão ou quando esta
+                seção chega à tela. <a href="/privacidade#mapa">Saiba mais</a>.
+              </p>
+              <p>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Cultura+Esp%C3%ADrita+Allan+Kardec"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Abrir no Google Maps (abre em nova aba)</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="redes" aria-labelledby="redes-titulo">
+        <div class="container">
+          <h2 id="redes-titulo" class="reveal">Siga a Casa</h2>
+          <a
+            class="canal-banner reveal"
+            href="https://www.youtube.com/@allankardeccceak9167"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/assets/img/casa/banner-youtube.jpg"
+              alt="Banner do canal Casa de Cultura Espírita Allan Kardec no YouTube"
+              width="1280"
+              height="211"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="visually-hidden">Abre o canal no YouTube em nova aba</span>
+          </a>
+          <div class="contact-links reveal" id="social-wrap" hidden>
+            <ul class="footer-nav" id="social-list"></ul>
+          </div>
+        </div>
+      </section>
+      <section class="section section--alt" id="contato" aria-labelledby="contato-titulo">
+        <div class="container">
+          <h2 id="contato-titulo" class="reveal">Fale com a gente</h2>
+          <p class="lead reveal">
+            Dúvidas, sugestões ou barreiras de acessibilidade. Não pedimos dados pessoais por aqui.
+          </p>
+          <div class="contact-links reveal">
+            <a class="btn btn--primary" href="#contato" data-cfg-href="contact.email"
+              >allankardecceak@gmail.com</a
+            >
+            <a
+              class="btn btn--ghost"
+              id="whatsapp-contact"
+              href="https://wa.me/5521977388945"
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden
+              >WhatsApp (abre em nova aba)</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <nav aria-label="Rodapé">
+            <ul class="footer-nav">
+              <li><a href="/privacidade">Privacidade</a></li>
+              <li><a href="/termos">Termos de uso</a></li>
+              <li><a href="/cookies">Cookies</a></li>
+              <li>
+                <button class="btn btn--ghost" id="cookie-manage" type="button">
+                  Gerenciar cookies
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <p>
+            © <span data-cfg="brand.company">Casa de Cultura Espírita Allan Kardec</span>. Todos os
+            direitos reservados. <span data-cfg="brand.credit">Site desenvolvido por CCEAK</span>.
+          </p>
+        </div>
+      </div>
+    </footer>
+    <section class="cookie-banner" id="cookie-banner" aria-labelledby="cookie-titulo" hidden>
+      <div class="cookie-inner">
+        <p id="cookie-titulo">
+          Usamos apenas cookies necessários para o site funcionar e para lembrar a sua escolha. Não
+          usamos cookies de rastreamento. O mapa de localização é do Google e pode gravar cookies
+          próprios ao ser carregado. <a href="/cookies">Saiba mais sobre cookies</a>.
+        </p>
+        <div class="cookie-actions">
+          <button class="btn btn--ghost" type="button" data-consent="reject">
+            Recusar opcionais
+          </button>
+          <button class="btn btn--primary" type="button" data-consent="accept">
+            Aceitar todos
+          </button>
+        </div>
+      </div>
+    </section>
+    <button class="to-top" id="to-top" type="button" aria-label="Voltar ao topo da página" hidden>
+      <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M12 5l-7 7h4v7h6v-7h4z" fill="currentColor" />
+      </svg>
+      <span class="visually-hidden">Voltar ao topo</span>
+    </button>
+  </body>
 </html>
